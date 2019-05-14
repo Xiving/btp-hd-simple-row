@@ -18,7 +18,7 @@ public class StencilOperationActivity extends Activity {
 
     private HeatChunkResult result;
 
-    StencilOperationActivity(ActivityIdentifier parent, double[][] temp, double[][] cond) {
+    public StencilOperationActivity(ActivityIdentifier parent, double[][] temp, double[][] cond) {
         super(new Context(LABEL), EXPECT_EVENTS);
 
         this.parent = parent;

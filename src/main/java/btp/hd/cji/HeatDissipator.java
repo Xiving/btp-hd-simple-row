@@ -1,7 +1,8 @@
 package btp.hd.cji;
 
-import btp.hd.cji.Activity.HeatRowActivity;
-import btp.hd.cji.model.HeatRowResult;
+import btp.hd.cji.Activity.StencilOperationActivity;
+import btp.hd.cji.model.HeatChunkResult;
+import btp.hd.cji.model.HeatRow;
 import btp.hd.cji.util.PgmReader;
 import ibis.constellation.*;
 import ibis.constellation.util.SingleEventCollector;
@@ -13,11 +14,15 @@ import java.io.PrintStream;
 @Slf4j
 public class HeatDissipator {
 
-    public static void writeFile(float[] array) {
+    public static void writeFile(double[][] temp) {
         try {
             PrintStream out = new PrintStream("heat-dissipator.out");
-            for (int i = 0; i < array.length; i++) {
-                out.println(array[i]);
+            for (int i = 0; i < temp.length; i++) {
+                for (int j = 0; j < temp[0].length; j++) {
+                    out.print(temp[i][j] + ' ');
+                }
+
+                out.println();
             }
             out.close();
         } catch (FileNotFoundException e) {
@@ -32,13 +37,13 @@ public class HeatDissipator {
         int nrExecutorsPerNode = 4;
 
         // the threshold to decide whether to compute or divide tasks
-        int threshold = 256;
+        double minDifference = 0.01;
 
         // the temperature values
         double[][] temp = null;
 
         // the conductivity values
-        double[][] cond;
+        double[][] cond = null;
 
         // number of nodes in the cluster
         int nrNodes = 1;
@@ -53,28 +58,36 @@ public class HeatDissipator {
             if (args[i].equals("-nrExecutorsPerNode")) {
                 i++;
                 nrExecutorsPerNode = Integer.parseInt(args[i]);
-            } else if (args[i].equals("-threshold")) {
+            } else if (args[i].equals("-minDifference")) {
                 i++;
-                threshold = Integer.parseInt(args[i]);
+                minDifference = Double.parseDouble(args[i]);
             } else if (args[i].equals("-tempFile")) {
                 i++;
-                temp = PgmReader.read(args[i]);
+                temp = PgmReader.read(System.class.getResource("/" + args[i]).getPath());
             } else if (args[i].equals("-condFile")) {
                 i++;
-                cond = PgmReader.read(args[i]);
+                cond = PgmReader.read(System.class.getResource("/" + args[i]).getPath());
             } else {
                 throw new Error("Usage: java HeatDissipator "
                         + "[ -nrExecutorsPerNode <num> ] "
                         + "[ -tempFile <file> ]"
                         + "[ -condFile <file> ]"
-                        + "[ -threshold <num> ] ");
+                        + "[ -minDifference <num> ] ");
             }
+        }
+
+        if (temp == null || cond == null) {
+            throw new Error("Usage: java HeatDissipator "
+                    + "[ -nrExecutorsPerNode <num> ] "
+                    + "[ -tempFile <file> ]"
+                    + "[ -condFile <file> ]"
+                    + "[ -minDifference <num> ] ");
         }
 
         // Initialize Constellation with the following configuration for an
         // executor.  We create nrExecutorsPerNode on a node.
         ConstellationConfiguration config =
-                new ConstellationConfiguration(new Context(HeatRowActivity.LABEL),
+                new ConstellationConfiguration(new Context(StencilOperationActivity.LABEL),
                         StealStrategy.SMALLEST, StealStrategy.BIGGEST,
                         StealStrategy.BIGGEST);
 
@@ -89,29 +102,35 @@ public class HeatDissipator {
 
             System.out.println("HeatDissipator, running with n x n: " + temp.length + " x " + temp[0].length);
 
-
             Timer overallTimer = constellation.getOverallTimer();
             int timing = overallTimer.start();
 
-            // set up the various activities, staring with the main activity:
+            HeatChunkResult result;
+            HeatRow row = HeatRow.of(temp, cond, 0);
 
-            // The SingleEventCollector is an activity that waits for a single
-            // event to come in will finish then.
-            SingleEventCollector sec = new SingleEventCollector(new Context(HeatRowActivity.LABEL));
+            do {
+                // set up the various activities, staring with the main activity:
 
-            // submit the single event collector
-            ActivityIdentifier aid = constellation.submit(sec);
-            // submit the vectorAddActivity. Set the parent as well.
-            constellation.submit(new HeatRowActivity(aid, computeDivideThreshold, n, a, b));
+                // The SingleEventCollector is an activity that waits for a single
+                // event to come in will finish then.
+                SingleEventCollector sec = new SingleEventCollector(new Context(StencilOperationActivity.LABEL));
 
-            log.debug("main(), just submitted, about to waitForEvent() "
-                    + "for any event with target " + aid);
-            HeatRowResult result = (HeatRowResult) sec.waitForEvent().getData();
-            log.debug("main(), done with waitForEvent() on identifier " + aid);
+                // submit the single event collector
+                ActivityIdentifier aid = constellation.submit(sec);
+                // submit the vectorAddActivity. Set the parent as well.
+                constellation.submit(new StencilOperationActivity(aid, row.getTemp(), row.getCond()));
+
+                log.debug("main(), just submitted, about to waitForEvent() "
+                        + "for any event with target " + aid);
+                result = (HeatChunkResult) sec.waitForEvent().getData();
+                log.debug("main(), done with waitForEvent() on identifier " + aid);
+
+                row = HeatRow.of(result.getTemp(), cond, 0);
+            } while (result.getMaxDifference() > minDifference);
 
             overallTimer.stop(timing);
 
-            writeFile(result.c);
+            writeFile(result.getTemp());
         }
         log.debug("calling Constellation.done()");
         constellation.done();
