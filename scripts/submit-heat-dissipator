@@ -15,15 +15,15 @@ function check_env_dir() {
     fi
 }
 
-check_env_dir VECTORADD_DIR
-BIN_DIR=$VECTORADD_DIR/bin
+check_env_dir ROW_IMPL_DIR
+BIN_DIR=$ROW_IMPL_DIR/bin
 source $BIN_DIR/check_environment_variable.bash
 
 check_env CONSTELLATION_PORT
 
 ruby $BIN_DIR/submit-on-nodes.das5.rb \
-     $VECTORADD_DIR \
-     lib/vector-add-constellation.jar \
-     nl.junglecomputing.constellation.vectoradd.VectorAdd \
+     $ROW_IMPL_DIR \
+     btp.hd.cji.jar \
+     btp.hd.cji.HeatDissipator \
      "$config_args" \
      "$@"

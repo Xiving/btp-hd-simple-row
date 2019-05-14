@@ -1,31 +1,43 @@
 package btp.hd.cji.model;
 
 import com.google.common.collect.Lists;
+import lombok.Data;
+
 import java.util.List;
 
-public class HeatChunk {
+@Data
+public class HeatRow {
 
     private int offset;
     private double[][] temp;
     private double[][] cond;
 
-    private HeatChunk(double[][] temp, double[][] cond, int offset) {
+    private HeatRow(double[][] temp, double[][] cond, int offset) {
         this.offset = offset;
         this.temp = temp;
         this.cond = cond;
-        exchangeOuterColumns();
     }
 
-    public static HeatChunk of(double[][] temp, double[][] cond, int offset) {
+    /**
+     * Take temperature and conductivity values in matrices and creates a halo around them
+     *
+     * @param temp matrix with temperature values
+     * @param cond matrix with conductivity values
+     * @param offset the offset in respect to its parent stencil
+     * @return a {@link HeatRow}
+     */
+    public static HeatRow of(double[][] temp, double[][] cond, int offset) {
         if (temp.length != cond.length || temp[0].length != cond[0].length) {
             throw new Error(
                 "Input temp and cond matrices are required to have the same dimensions"
             );
         }
 
+        // create halo
         double[][] tempStencil = new double[temp.length + 2][temp[0].length + 2];
         double[][] condStencil = new double[temp.length + 2][temp[0].length + 2];
 
+        // fill in values
         for (int i = 0; i < temp.length; i++) {
             for (int j = 0; j < temp[0].length; j++) {
                 tempStencil[i + 1][j + 1] = temp[i][j];
@@ -33,7 +45,16 @@ public class HeatChunk {
             }
         }
 
-        return new HeatChunk(tempStencil, condStencil, offset);
+        // exchange outer columns
+        for (int i = 0; i < tempStencil.length; i++) {
+            tempStencil[i][0] = tempStencil[i][tempStencil[0].length - 2];
+            tempStencil[i][tempStencil[0].length - 1] = tempStencil[i][1];
+
+            condStencil[i][0] = condStencil[i][condStencil[0].length - 2];
+            condStencil[i][condStencil[0].length - 1] = condStencil[i][1];
+        }
+
+        return new HeatRow(tempStencil, condStencil, offset);
     }
 
     private void exchangeOuterColumns() {
@@ -43,7 +64,7 @@ public class HeatChunk {
         }
     }
 
-    public List<HeatChunk> splitIntoTwo() {
+    public List<HeatRow> splitIntoTwo() {
         double half = ((double) height()) / 2;
         int topHeight = (int) (Math.ceil(half) + 1);
         int botHeight = (int) (Math.floor(half) + 1);
@@ -69,8 +90,8 @@ public class HeatChunk {
             }
         }
 
-        HeatChunk topChunk = new HeatChunk(topTemp, topCond, 0);
-        HeatChunk bottomChunk = new HeatChunk(botTemp, botCond, topHeight);
+        HeatRow topChunk = new HeatRow(topTemp, topCond, 0);
+        HeatRow bottomChunk = new HeatRow(botTemp, botCond, topHeight);
 
         return Lists.newArrayList(topChunk, bottomChunk);
     }

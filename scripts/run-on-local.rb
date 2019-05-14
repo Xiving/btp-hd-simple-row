@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-root_dir=ENV['VECTORADD_DIR']
+root_dir=ENV['ROW_IMPL_DIR']
 bin_dir="#{root_dir}/bin"
 
 if ARGV.length < 2

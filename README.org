@@ -39,14 +39,14 @@ installed in ~/path/of/your/choice~.  For example, if you installed it using
 ~installDist~, the path would look like:
 
 #+begin_src sh
-export VECTORADD_DIR=/path/of/your/choice/vectoradd-constellation/build/install/vectoradd-constellation
+export ROW_IMPL_DIR=/path/of/your/choice/vectoradd-constellation/build/install/vectoradd-constellation
 #+end_src
 
 Otherwise:
 
 #+begin_src sh
-export VECTORADD_DIR=/path/of/your/choice/vectoradd-constellation
-cd $VECTORADD_DIR
+export ROW_IMPL_DIR=/path/of/your/choice/vectoradd-constellation
+cd $ROW_IMPL_DIR
 #+end_src
 
 ** Running locally
