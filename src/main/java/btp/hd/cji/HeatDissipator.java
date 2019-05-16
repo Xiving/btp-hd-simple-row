@@ -4,6 +4,7 @@ import btp.hd.cji.Activity.StencilOperationActivity;
 import btp.hd.cji.model.TempChunkResult;
 import btp.hd.cji.model.HeatRow;
 import btp.hd.cji.model.HeatChunkWithHalo;
+import btp.hd.cji.Activity.DivideConquerActivity;
 import btp.hd.cji.util.HeatValueGenerator;
 import ibis.constellation.*;
 import ibis.constellation.util.SingleEventCollector;
@@ -34,6 +35,8 @@ public class HeatDissipator {
 
     public static void main(String[] args) throws Exception {
         // this code is executed on every node
+
+        int divideConquerThreshold = 5;
 
         // the number of executors per node in the cluster
         int nrExecutorsPerNode = 4;
@@ -77,13 +80,18 @@ public class HeatDissipator {
 
         // Initialize Constellation with the following configuration for an
         // executor.  We create nrExecutorsPerNode on a node.
-        ConstellationConfiguration config =
+        ConstellationConfiguration config1 =
+                new ConstellationConfiguration(new Context(DivideConquerActivity.LABEL),
+                        StealStrategy.SMALLEST, StealStrategy.BIGGEST,
+                        StealStrategy.BIGGEST);
+
+        ConstellationConfiguration config2 =
                 new ConstellationConfiguration(new Context(StencilOperationActivity.LABEL),
                         StealStrategy.SMALLEST, StealStrategy.BIGGEST,
                         StealStrategy.BIGGEST);
 
         Constellation constellation =
-                ConstellationFactory.createConstellation(config, nrExecutorsPerNode);
+                ConstellationFactory.createConstellation(config1, config2);
 
         constellation.activate();
 
@@ -107,14 +115,14 @@ public class HeatDissipator {
 
                 // The SingleEventCollector is an activity that waits for a single
                 // event to come in will finish then.
-                SingleEventCollector sec = new SingleEventCollector(new Context(StencilOperationActivity.LABEL));
+                SingleEventCollector sec = new SingleEventCollector(new Context(DivideConquerActivity.LABEL));
 
                 // submit the single event collector
                 ActivityIdentifier aid = constellation.submit(sec);
                 // submit the vectorAddActivity. Set the parent as well.
                 HeatChunkWithHalo chunk = new HeatChunkWithHalo(row.getTemp(), row.getCond());
 
-                constellation.submit(new StencilOperationActivity(aid, chunk));
+                constellation.submit(new DivideConquerActivity(aid, chunk, divideConquerThreshold));
 
                 log.info("main(), just submitted, about to waitForEvent() "
                         + "for any event with target " + aid);

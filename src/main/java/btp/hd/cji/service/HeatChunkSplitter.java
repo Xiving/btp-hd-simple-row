@@ -15,14 +15,14 @@ public class HeatChunkSplitter {
     }
 
     private static HeatChunkWithHalo makeTop(HeatChunkWithHalo chunk) {
-        double half = ((double) chunk.height()) / 2;
+        double half = ((double) chunk.height() + 2) / 2;
         int topHeight = (int) (Math.ceil(half) + 1);
 
         double[][] temp = chunk.getTemp();
         double[][] cond = chunk.getCond();
 
-        double[][] topTemp = new double[topHeight][chunk.width()];
-        double[][] topCond = new double[topHeight][chunk.width()];
+        double[][] topTemp = new double[topHeight][chunk.width() + 2];
+        double[][] topCond = new double[topHeight][chunk.width() + 2];
 
         for (int i = 0; i < topHeight; i++) {
             for (int j = 0; j < chunk.width(); j++) {
@@ -35,7 +35,7 @@ public class HeatChunkSplitter {
     }
 
     private static HeatChunkWithHalo makeBot(HeatChunkWithHalo chunk) {
-        double half = ((double) chunk.height()) / 2;
+        double half = ((double) chunk.height() + 2) / 2;
         int topHeight = (int) (Math.ceil(half) + 1);
         int botHeight = (int) (Math.floor(half) + 1);
         int botOffset = ((int) topHeight) - 2;
@@ -43,8 +43,8 @@ public class HeatChunkSplitter {
         double[][] temp = chunk.getTemp();
         double[][] cond = chunk.getCond();
 
-        double[][] botTemp = new double[botHeight][chunk.width()];
-        double[][] botCond = new double[botHeight][chunk.width()];
+        double[][] botTemp = new double[botHeight][chunk.width() + 2];
+        double[][] botCond = new double[botHeight][chunk.width() + 2];
 
 
         for (int i = 0; i < botHeight; i++) {

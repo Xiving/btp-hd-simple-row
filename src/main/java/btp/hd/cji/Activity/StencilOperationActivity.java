@@ -31,7 +31,7 @@ public class StencilOperationActivity extends Activity {
         Timer timer = cons.getTimer("java", executor, "stencil operation");
         int timing = timer.start();
 
-        log.info("Performing a stencil operation of size {} x {}", chunk.getTemp().length, chunk.getTemp()[0].length);
+        log.info("Performing a stencil operation of size {} x {}", chunk.height(), chunk.width());
 
         result = StencilOperationService.execute(chunk);
 

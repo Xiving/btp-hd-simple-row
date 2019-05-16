@@ -1,14 +1,13 @@
 package btp.hd.cji.service;
 
 import btp.hd.cji.model.TempChunkResult;
-import lombok.Data;
 
 public class TempChunkResultBuilder {
 
     private final double[][] result;
     private final int offsetInParent;
 
-    private int chunksAdded = 0;
+    private int rowsAdded = 0;
 
     public TempChunkResultBuilder(int height, int width, int offsetInParent) {
         this.result = new double[height][width];
@@ -24,11 +23,15 @@ public class TempChunkResultBuilder {
             }
         }
 
-        chunksAdded++;
+        rowsAdded += chunk.height();
+    }
+
+    public synchronized TempChunkResult getResult() {
+        return new TempChunkResult(result, offsetInParent);
     }
 
     public boolean finished() {
-        return chunksAdded > 1;
+        return rowsAdded >= result.length;
     }
 
 }

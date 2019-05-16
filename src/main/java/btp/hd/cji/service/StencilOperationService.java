@@ -2,7 +2,9 @@ package btp.hd.cji.service;
 
 import btp.hd.cji.model.HeatChunkWithHalo;
 import btp.hd.cji.model.TempChunkResult;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class StencilOperationService {
 
     private static final double DIRECT_CONST = 0.25 * Math.sqrt(2) / (Math.sqrt(2) + 1.0);
@@ -11,13 +13,17 @@ public class StencilOperationService {
 
     public static TempChunkResult execute(HeatChunkWithHalo chunk) {
         double maxDifference = 0;
+        int height = chunk.height();
+        int width = chunk.width();
         double[][] temp = chunk.getTemp();
         double[][] cond = chunk.getCond();
 
-        double[][] result = new double[temp.length - 2][temp[0].length - 2];
+        double[][] result = new double[height][width];
 
-        for (int i = 0; i < temp.length - 2; i++) {
-            for (int j = 0; j < temp[0].length - 2; j++) {
+        log.info("Calculating results for chunk of size {} x {}", height, width);
+
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
                 result[i][j] = nextTemp(temp, cond, i + 1, j + 1);
 
                 double difference = Math.abs(temp[i + 1][j + 1] - result[i][j]);
