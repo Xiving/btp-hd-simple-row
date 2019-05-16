@@ -1,7 +1,7 @@
 //package btp.hd.cji.Activity;
 //
 //import btp.hd.cji.model.HeatRow;
-//import btp.hd.cji.model.HeatRowResult;
+//import btp.hd.cji.service.TempChunkResultBuilder;
 //import ibis.constellation.*;
 //import lombok.extern.slf4j.Slf4j;
 //
@@ -15,7 +15,7 @@
 //
 //    private ActivityIdentifier parent;
 //    private int threshold;
-//    private HeatRowResult result;
+//    private TempChunkResultBuilder getResult;
 //    private HeatRow row;
 //
 //    private int nrReceivedEvents;
@@ -26,7 +26,7 @@
 //        this.parent = parent;
 //        this.threshold = threshold;
 //
-//        this.result = new HeatRowResult(new double[row.height()][row.width()], offset);
+//        this.getResult = new TempChunkResultBuilder(new double[row.height()][row.width()], offset);
 //        this.row = row;
 //
 //        this.nrReceivedEvents = 0;

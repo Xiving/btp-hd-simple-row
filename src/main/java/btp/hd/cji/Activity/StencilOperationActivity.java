@@ -1,7 +1,8 @@
 package btp.hd.cji.Activity;
 
-import btp.hd.cji.model.HeatChunkStep;
-import btp.hd.cji.model.HeatChunkResult;
+import btp.hd.cji.model.TempChunkResult;
+import btp.hd.cji.model.HeatChunkWithHalo;
+import btp.hd.cji.service.StencilOperationService;
 import ibis.constellation.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -13,34 +14,33 @@ public class StencilOperationActivity extends Activity {
     private static final boolean EXPECT_EVENTS = false;
 
     private final ActivityIdentifier parent;
-    private final double[][] temp;
-    private final double[][] cond;
+    private final HeatChunkWithHalo chunk;
 
-    private HeatChunkResult result;
+    private TempChunkResult result;
 
-    public StencilOperationActivity(ActivityIdentifier parent, double[][] temp, double[][] cond) {
+    public StencilOperationActivity(ActivityIdentifier parent, HeatChunkWithHalo chunk) {
         super(new Context(LABEL), EXPECT_EVENTS);
 
         this.parent = parent;
-        this.temp = temp;
-        this.cond = cond;
+        this.chunk = chunk;
     }
 
     @Override
     public int initialize(Constellation cons) {
+        String executor = cons.identifier().toString();
+        Timer timer = cons.getTimer("java", executor, "stencil operation");
+        int timing = timer.start();
 
-            String executor = cons.identifier().toString();
-            Timer timer = cons.getTimer("java", executor, "stencil operation");
-            int timing = timer.start();
+        log.info("Performing a stencil operation of size {} x {}", chunk.getTemp().length, chunk.getTemp()[0].length);
 
-            log.debug("Perform stencil operation of size {} x {}", temp.length, temp[0].length);
+        result = StencilOperationService.execute(chunk);
 
-            result = new HeatChunkStep(temp, cond).result();
+        timer.stop(timing);
 
-            timer.stop(timing);
+        log.info("Finished stencil operation in {} ms'", timer.totalTimeVal());
 
-            // We are done, indicate that we are ready to cleanup
-            return FINISH;
+        // We are done, indicate that we are ready to cleanup
+        return FINISH;
     }
 
     @Override

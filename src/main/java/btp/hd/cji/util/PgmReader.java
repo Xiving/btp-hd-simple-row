@@ -1,13 +1,23 @@
 package btp.hd.cji.util;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.util.Objects;
 import java.util.StringTokenizer;
 
 public class PgmReader {
-    public static double[][] read(String fileName) {
+
+    private static final String TEMP_TXT = "temp.txt";
+    private static final String COND_TXT = "cond.txt";
+
+    public static double[][] getTempValues() {
+        return read(TEMP_TXT);
+    }
+
+    public static double[][] getCondValues() {
+        return read(COND_TXT);
+    }
+
+    private static double[][] read(String fileName) {
         int height = 0;
         int width = 0;
         double[][] matrix;
@@ -43,13 +53,23 @@ public class PgmReader {
 
     private static BufferedReader openBufferedReader(String fileName) {
         try {
-            return new BufferedReader(new FileReader(fileName));
+            return new BufferedReader(getResourceReader(fileName));
         } catch (FileNotFoundException e) {
-            System.err.println("Could not open buffered reader!");
-            System.exit(1);
+            e.printStackTrace();
         }
 
         return null; // ignore
+    }
+
+    private static Reader getResourceReader(String fileName) throws FileNotFoundException {
+        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+        InputStream inputStream = classLoader.getResourceAsStream(fileName);
+
+        if (Objects.isNull(inputStream)) {
+            throw new FileNotFoundException(String.format("File '{}' not found", fileName));
+        }
+
+        return new InputStreamReader(inputStream);
     }
 
 }

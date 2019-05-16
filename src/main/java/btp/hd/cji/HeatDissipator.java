@@ -1,9 +1,10 @@
 package btp.hd.cji;
 
 import btp.hd.cji.Activity.StencilOperationActivity;
-import btp.hd.cji.model.HeatChunkResult;
+import btp.hd.cji.model.TempChunkResult;
 import btp.hd.cji.model.HeatRow;
-import btp.hd.cji.util.PgmReader;
+import btp.hd.cji.model.HeatChunkWithHalo;
+import btp.hd.cji.util.HeatValueGenerator;
 import ibis.constellation.*;
 import ibis.constellation.util.SingleEventCollector;
 import lombok.extern.slf4j.Slf4j;
@@ -17,16 +18,17 @@ public class HeatDissipator {
     public static void writeFile(double[][] temp) {
         try {
             PrintStream out = new PrintStream("heat-dissipator.out");
+
             for (int i = 0; i < temp.length; i++) {
                 for (int j = 0; j < temp[0].length; j++) {
-                    out.print(temp[i][j] + ' ');
+                    out.print(temp[i][j] + " ");
                 }
 
                 out.println();
             }
             out.close();
         } catch (FileNotFoundException e) {
-            System.err.println(e.getMessage());
+            log.error(e.getMessage());
         }
     }
 
@@ -37,13 +39,10 @@ public class HeatDissipator {
         int nrExecutorsPerNode = 4;
 
         // the threshold to decide whether to compute or divide tasks
-        double minDifference = 0.01;
+        double minDifference = 10;
 
-        // the temperature values
-        double[][] temp = null;
-
-        // the conductivity values
-        double[][] cond = null;
+        int height = 10;
+        int width = 10;
 
         // number of nodes in the cluster
         int nrNodes = 1;
@@ -61,28 +60,20 @@ public class HeatDissipator {
             } else if (args[i].equals("-minDifference")) {
                 i++;
                 minDifference = Double.parseDouble(args[i]);
-            } else if (args[i].equals("-tempFile")) {
+            } else if (args[i].equals("-h")) {
                 i++;
-                temp = PgmReader.read(System.class.getResource("/" + args[i]).getPath());
-            } else if (args[i].equals("-condFile")) {
+                height = Integer.parseInt(args[i]);
+            } else if (args[i].equals("-w")) {
                 i++;
-                cond = PgmReader.read(System.class.getResource("/" + args[i]).getPath());
+                width = Integer.parseInt(args[i]);
             } else {
                 throw new Error("Usage: java HeatDissipator "
                         + "[ -nrExecutorsPerNode <num> ] "
-                        + "[ -tempFile <file> ]"
-                        + "[ -condFile <file> ]"
                         + "[ -minDifference <num> ] ");
             }
         }
 
-        if (temp == null || cond == null) {
-            throw new Error("Usage: java HeatDissipator "
-                    + "[ -nrExecutorsPerNode <num> ] "
-                    + "[ -tempFile <file> ]"
-                    + "[ -condFile <file> ]"
-                    + "[ -minDifference <num> ] ");
-        }
+        log.info("HeatDissipator, running with dimensions {} x {}:", height, width);
 
         // Initialize Constellation with the following configuration for an
         // executor.  We create nrExecutorsPerNode on a node.
@@ -100,13 +91,16 @@ public class HeatDissipator {
             // This is master specific code.  The rest is going to call
             // Constellation.done(), waiting for Activities to steal.
 
-            System.out.println("HeatDissipator, running with n x n: " + temp.length + " x " + temp[0].length);
+            HeatValueGenerator heatValueGenerator = new HeatValueGenerator(height, width, 0.2, 100);
+
+            double[][] temp = heatValueGenerator.getTemp();
+            double[][] cond = heatValueGenerator.getCond();
+
+            TempChunkResult result;
+            HeatRow row = HeatRow.of(temp, cond, 0);
 
             Timer overallTimer = constellation.getOverallTimer();
             int timing = overallTimer.start();
-
-            HeatChunkResult result;
-            HeatRow row = HeatRow.of(temp, cond, 0);
 
             do {
                 // set up the various activities, staring with the main activity:
@@ -118,12 +112,16 @@ public class HeatDissipator {
                 // submit the single event collector
                 ActivityIdentifier aid = constellation.submit(sec);
                 // submit the vectorAddActivity. Set the parent as well.
-                constellation.submit(new StencilOperationActivity(aid, row.getTemp(), row.getCond()));
+                HeatChunkWithHalo chunk = new HeatChunkWithHalo(row.getTemp(), row.getCond());
 
-                log.debug("main(), just submitted, about to waitForEvent() "
+                constellation.submit(new StencilOperationActivity(aid, chunk));
+
+                log.info("main(), just submitted, about to waitForEvent() "
                         + "for any event with target " + aid);
-                result = (HeatChunkResult) sec.waitForEvent().getData();
-                log.debug("main(), done with waitForEvent() on identifier " + aid);
+                result = (TempChunkResult) sec.waitForEvent().getData();
+                log.info("main(), done with waitForEvent() on identifier " + aid);
+
+                log.info("Performed stencil operation with max temperature delta {}", result.getMaxDifference());
 
                 row = HeatRow.of(result.getTemp(), cond, 0);
             } while (result.getMaxDifference() > minDifference);

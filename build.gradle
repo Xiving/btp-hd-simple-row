@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    compile 'org.slf4j:slf4j-nop:1.7.25'
+    compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.21'
     implementation 'nl.junglecomputing:constellation:2.0.0'
     compileOnly 'org.projectlombok:lombok:1.18.8'
     annotationProcessor 'org.projectlombok:lombok:1.18.8'
@@ -34,5 +34,4 @@ distributions {
         }
     }
 }
-
 
