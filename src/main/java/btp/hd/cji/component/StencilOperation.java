@@ -20,6 +20,7 @@ public class StencilOperation {
 
         double[][] result = new double[height][width];
 
+        log.info("Calculating results for haloChunk of size {} x {}", chunk.haloHeight(), chunk.haloWidth());
         log.info("Calculating results for chunk of size {} x {}", height, width);
 
         for (int i = 0; i < height; i++) {
