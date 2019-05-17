@@ -43,13 +43,10 @@ public class StencilOperation {
         double w = cond[i][j];
         double restW = 1 - w;
 
-        log.info("next temp i: {}, j: {}", i, j);
-        log.info("row width: {}", temp[i].length);
-
         return temp[i][j] * w +
             (temp[i - 1][j] + temp[i][j - 1] + temp[i][j + 1] + temp[i + 1][j]) * (restW
                 * DIRECT_CONST) +
-            (temp[i - 1][j - 1] + temp[i - 1][j + 1] + temp[i + 1][j - 1] + temp[j + 1][i + 1]) * (
+            (temp[i - 1][j - 1] + temp[i - 1][j + 1] + temp[i + 1][j - 1] + temp[i + 1][j + 1]) * (
                 restW * DIAGONAL_CONST);
     }
 }
