@@ -125,7 +125,6 @@ public class HeatDissipatorApp {
                 log.info("Performed stencil operation with max temperature delta {}", result.getMaxDifference());
 
                 temp = result.getTemp();
-                break;
             } while (result.getMaxDifference() > minDifference);
 
             overallTimer.stop(timing);
