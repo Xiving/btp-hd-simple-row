@@ -15,4 +15,19 @@ public abstract class  AbstractTempChunk implements java.io.Serializable {
     public int width() {
         return temp[0].length;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder str = new StringBuilder();
+
+        for (double[] row: temp) {
+            for (double d: row) {
+                str.append(d).append(' ');
+            }
+
+            str.append('\n');
+        }
+
+        return str.toString();
+    }
 }

@@ -113,6 +113,8 @@ public class HeatDissipatorApp {
                 // submit the vectorAddActivity. Set the parent as well.
                 HeatChunkWithHalo chunk = CylinderChunkBuilder.build(temp, cond);
 
+                log.info("Current chunk: \n {}", chunk.toString());
+
                 constellation.submit(new DivideConquerActivity(aid, chunk, divideConquerThreshold));
 
                 log.info("main(), just submitted, about to waitForEvent() "
