@@ -20,7 +20,8 @@ public class StencilOperation {
 
         double[][] result = new double[height][width];
 
-        log.info("Calculating results for haloChunk of size {} x {}", chunk.haloHeight(), chunk.haloWidth());
+        log.info("Calculating results for haloChunk of size {} x {}", chunk.haloHeight(),
+            chunk.haloWidth());
         log.info("Calculating results for chunk of size {} x {}", height, width);
 
         for (int i = 0; i < height; i++) {
@@ -29,7 +30,7 @@ public class StencilOperation {
 
                 double difference = Math.abs(temp[i + 1][j + 1] - result[i][j]);
 
-                if(difference > maxDifference) {
+                if (difference > maxDifference) {
                     maxDifference = difference;
                 }
             }
@@ -42,8 +43,12 @@ public class StencilOperation {
         double w = cond[i][j];
         double restW = 1 - w;
 
+        log.info("next temp i: {}, j: {}", i, j);
+
         return temp[i][j] * w +
-                (temp[i][j - 1] + temp[i - 1][j] + temp[i + 1][j] + temp[j + 1][i]) * (restW * DIRECT_CONST) +
-                (temp[i - 1][j - 1] + temp[i - 1][j + 1] + temp[i + 1][j - 1] + temp[j + 1][i + 1]) * (restW * DIAGONAL_CONST);
+            (temp[i][j - 1] + temp[i - 1][j] + temp[i + 1][j] + temp[j + 1][i]) * (restW
+                * DIRECT_CONST) +
+            (temp[i - 1][j - 1] + temp[i - 1][j + 1] + temp[i + 1][j - 1] + temp[j + 1][i + 1]) * (
+                restW * DIAGONAL_CONST);
     }
 }
