@@ -34,7 +34,10 @@ public class StencilOperation {
             }
         }
 
-        return new TempChunkResult(result, maxDifference);
+        TempChunkResult resultChunk = new TempChunkResult(result, maxDifference);
+        log.info("Result of stencil operation on chunk:\n{}", resultChunk.toString());
+
+
     }
 
     private static double nextTemp(double[][] temp, double[][] cond, int i, int j) {

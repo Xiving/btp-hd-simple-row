@@ -16,4 +16,9 @@ public class TempChunkResult extends AbstractTempChunk {
         super(temp, 0);
         this.maxDifference = maxDifference;
     }
+
+    @Override
+    public String toString() {
+        return super.toString();
+    }
 }
