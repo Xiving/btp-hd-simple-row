@@ -2,7 +2,7 @@ package btp.hd.cji.Activity;
 
 import btp.hd.cji.model.TempChunkResult;
 import btp.hd.cji.model.HeatChunkWithHalo;
-import btp.hd.cji.service.StencilOperationService;
+import btp.hd.cji.component.StencilOperation;
 import ibis.constellation.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,7 +33,7 @@ public class StencilOperationActivity extends Activity {
 
         log.info("Performing a stencil operation of size {} x {}", chunk.height(), chunk.width());
 
-        result = StencilOperationService.execute(chunk);
+        result = StencilOperation.perform(chunk);
 
         timer.stop(timing);
 

@@ -1,17 +1,17 @@
-package btp.hd.cji.service;
+package btp.hd.cji.component;
 
 import btp.hd.cji.model.HeatChunkWithHalo;
 import btp.hd.cji.model.TempChunkResult;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class StencilOperationService {
+public class StencilOperation {
 
     private static final double DIRECT_CONST = 0.25 * Math.sqrt(2) / (Math.sqrt(2) + 1.0);
     private static final double DIAGONAL_CONST = 0.25 / (Math.sqrt(2) + 1.0);
 
 
-    public static TempChunkResult execute(HeatChunkWithHalo chunk) {
+    public static TempChunkResult perform(HeatChunkWithHalo chunk) {
         double maxDifference = 0;
         int height = chunk.height();
         int width = chunk.width();

@@ -2,7 +2,6 @@ package btp.hd.cji;
 
 import btp.hd.cji.Activity.StencilOperationActivity;
 import btp.hd.cji.model.TempChunkResult;
-import btp.hd.cji.model.HeatRow;
 import btp.hd.cji.model.HeatChunkWithHalo;
 import btp.hd.cji.Activity.DivideConquerActivity;
 import btp.hd.cji.util.HeatValueGenerator;
@@ -14,7 +13,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 
 @Slf4j
-public class HeatDissipator {
+public class HeatDissipatorApp {
 
     public static void writeFile(double[][] temp) {
         try {
@@ -34,27 +33,13 @@ public class HeatDissipator {
     }
 
     public static void main(String[] args) throws Exception {
-        // this code is executed on every node
 
         int divideConquerThreshold = 5;
-
-        // the number of executors per node in the cluster
         int nrExecutorsPerNode = 4;
-
-        // the threshold to decide whether to compute or divide tasks
         double minDifference = 10;
-
         int height = 10;
         int width = 10;
-
-        // number of nodes in the cluster
         int nrNodes = 1;
-
-        // determine the number of tasks based on the size of the pool of nodes
-        String ibisPoolSize = System.getProperty("ibis.pool.size");
-        if (ibisPoolSize != null) {
-            nrNodes = Integer.parseInt(ibisPoolSize);
-        }
 
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("-nrExecutorsPerNode")) {
@@ -70,16 +55,22 @@ public class HeatDissipator {
                 i++;
                 width = Integer.parseInt(args[i]);
             } else {
-                throw new Error("Usage: java HeatDissipator "
+                throw new Error("Usage: java HeatDissipatorApp "
                         + "[ -nrExecutorsPerNode <num> ] "
-                        + "[ -minDifference <num> ] ");
+                        + "[ -minDifference <num> ] "
+                        + "[ -h <height> ]"
+                        + "[ -w <width> ]");
             }
         }
 
-        log.info("HeatDissipator, running with dimensions {} x {}:", height, width);
+        String ibisPoolSize = System.getProperty("ibis.pool.size");
+        if (ibisPoolSize != null) {
+            nrNodes = Integer.parseInt(ibisPoolSize);
+        }
 
-        // Initialize Constellation with the following configuration for an
-        // executor.  We create nrExecutorsPerNode on a node.
+        log.info("HeatDissipatorApp, running with dimensions {} x {}:", height, width);
+
+        // Initialize Constellation with the following configurations
         ConstellationConfiguration config1 =
                 new ConstellationConfiguration(new Context(DivideConquerActivity.LABEL),
                         StealStrategy.SMALLEST, StealStrategy.BIGGEST,

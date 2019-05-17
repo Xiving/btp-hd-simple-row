@@ -23,4 +23,11 @@ public class HeatChunkWithHalo extends AbstractHeatChunk {
         return super.width() - 2;
     }
 
+    public int haloHeight() {
+        return super.height();
+    }
+
+    public int haloWidth() {
+        return super.width();
+    }
 }

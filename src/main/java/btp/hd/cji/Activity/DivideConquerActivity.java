@@ -2,8 +2,8 @@ package btp.hd.cji.Activity;
 
 import btp.hd.cji.model.HeatChunkWithHalo;
 import btp.hd.cji.model.TempChunkResult;
-import btp.hd.cji.service.HeatChunkSplitter;
-import btp.hd.cji.service.TempChunkResultBuilder;
+import btp.hd.cji.component.HeatChunkSplitter;
+import btp.hd.cji.component.ResultBuilder;
 import ibis.constellation.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,7 +18,7 @@ public class DivideConquerActivity extends Activity {
     private final HeatChunkWithHalo chunk;
     private final int threshold;
 
-    private TempChunkResultBuilder resultBuilder;
+    private ResultBuilder resultBuilder;
     private boolean splitChunk = false;
 
     public DivideConquerActivity(ActivityIdentifier parent, HeatChunkWithHalo chunk, int threshold) {
@@ -45,7 +45,7 @@ public class DivideConquerActivity extends Activity {
             return FINISH;
         } else {
             log.debug("Chunk with height {} is too big. Will be split into smaller chunks", chunk.height());
-            resultBuilder = new TempChunkResultBuilder(chunk.height(), chunk.width(), chunk.getOffsetInParent());
+            resultBuilder = new ResultBuilder(chunk.height(), chunk.width(), chunk.getOffsetInParent());
             HeatChunkSplitter splitter = new HeatChunkSplitter(chunk);
             splitChunk = true;
 

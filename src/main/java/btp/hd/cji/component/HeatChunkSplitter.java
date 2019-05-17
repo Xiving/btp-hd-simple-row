@@ -1,4 +1,4 @@
-package btp.hd.cji.service;
+package btp.hd.cji.component;
 
 import btp.hd.cji.model.HeatChunkWithHalo;
 import lombok.Data;
