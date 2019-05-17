@@ -44,6 +44,7 @@ public class StencilOperation {
         double restW = 1 - w;
 
         log.info("next temp i: {}, j: {}", i, j);
+        log.info("row width: {}", temp[i].length);
 
         return temp[i][j] * w +
             (temp[i - 1][j] + temp[i][j - 1] + temp[i][j + 1] + temp[i + 1][j]) * (restW
