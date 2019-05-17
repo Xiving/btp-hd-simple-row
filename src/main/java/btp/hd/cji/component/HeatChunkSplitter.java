@@ -15,17 +15,17 @@ public class HeatChunkSplitter {
     }
 
     private static HeatChunkWithHalo makeTop(HeatChunkWithHalo chunk) {
-        double half = ((double) chunk.height() + 2) / 2;
+        double half = ((double) chunk.haloHeight()) / 2;
         int topHeight = (int) (Math.ceil(half) + 1);
 
         double[][] temp = chunk.getTemp();
         double[][] cond = chunk.getCond();
 
-        double[][] topTemp = new double[topHeight][chunk.width() + 2];
-        double[][] topCond = new double[topHeight][chunk.width() + 2];
+        double[][] topTemp = new double[topHeight][chunk.haloWidth()];
+        double[][] topCond = new double[topHeight][chunk.haloWidth()];
 
         for (int i = 0; i < topHeight; i++) {
-            for (int j = 0; j < chunk.width(); j++) {
+            for (int j = 0; j < chunk.haloWidth(); j++) {
                 topTemp[i][j] = temp[i][j];
                 topCond[i][j] = cond[i][j];
             }
@@ -35,20 +35,20 @@ public class HeatChunkSplitter {
     }
 
     private static HeatChunkWithHalo makeBot(HeatChunkWithHalo chunk) {
-        double half = ((double) chunk.height() + 2) / 2;
+        double half = ((double) chunk.haloWidth()) / 2;
         int topHeight = (int) (Math.ceil(half) + 1);
         int botHeight = (int) (Math.floor(half) + 1);
-        int botOffset = ((int) topHeight) - 2;
+        int botOffset =  topHeight - 2;
 
         double[][] temp = chunk.getTemp();
         double[][] cond = chunk.getCond();
 
-        double[][] botTemp = new double[botHeight][chunk.width() + 2];
-        double[][] botCond = new double[botHeight][chunk.width() + 2];
+        double[][] botTemp = new double[botHeight][chunk.haloWidth()];
+        double[][] botCond = new double[botHeight][chunk.haloWidth()];
 
 
         for (int i = 0; i < botHeight; i++) {
-            for (int j = 0; j < chunk.width(); j++) {
+            for (int j = 0; j < chunk.haloWidth(); j++) {
                 botTemp[i][j] = temp[i + botOffset][j];
                 botCond[i][j] = cond[i + botOffset][j];
             }
