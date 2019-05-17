@@ -1,6 +1,7 @@
 package btp.hd.cji;
 
 import btp.hd.cji.Activity.StencilOperationActivity;
+import btp.hd.cji.component.CylinderChunkBuilder;
 import btp.hd.cji.model.TempChunkResult;
 import btp.hd.cji.model.HeatChunkWithHalo;
 import btp.hd.cji.Activity.DivideConquerActivity;
@@ -96,7 +97,6 @@ public class HeatDissipatorApp {
             double[][] cond = heatValueGenerator.getCond();
 
             TempChunkResult result;
-            HeatRow row = HeatRow.of(temp, cond, 0);
 
             Timer overallTimer = constellation.getOverallTimer();
             int timing = overallTimer.start();
@@ -111,7 +111,7 @@ public class HeatDissipatorApp {
                 // submit the single event collector
                 ActivityIdentifier aid = constellation.submit(sec);
                 // submit the vectorAddActivity. Set the parent as well.
-                HeatChunkWithHalo chunk = new HeatChunkWithHalo(row.getTemp(), row.getCond());
+                HeatChunkWithHalo chunk = CylinderChunkBuilder.build(temp, cond);
 
                 constellation.submit(new DivideConquerActivity(aid, chunk, divideConquerThreshold));
 
@@ -122,7 +122,7 @@ public class HeatDissipatorApp {
 
                 log.info("Performed stencil operation with max temperature delta {}", result.getMaxDifference());
 
-                row = HeatRow.of(result.getTemp(), cond, 0);
+                temp = result.getTemp();
             } while (result.getMaxDifference() > minDifference);
 
             overallTimer.stop(timing);
