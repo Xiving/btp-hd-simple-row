@@ -46,7 +46,7 @@ public class StencilOperation {
         log.info("next temp i: {}, j: {}", i, j);
 
         return temp[i][j] * w +
-            (temp[i][j - 1] + temp[i - 1][j] + temp[i + 1][j] + temp[j + 1][i]) * (restW
+            (temp[i - 1][j] + temp[i][j - 1] + temp[i][j + 1] + temp[i + 1][j]) * (restW
                 * DIRECT_CONST) +
             (temp[i - 1][j - 1] + temp[i - 1][j + 1] + temp[i + 1][j - 1] + temp[j + 1][i + 1]) * (
                 restW * DIAGONAL_CONST);
