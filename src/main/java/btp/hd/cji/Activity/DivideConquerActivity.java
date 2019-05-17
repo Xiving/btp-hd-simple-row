@@ -66,9 +66,11 @@ public class DivideConquerActivity extends Activity {
             log.debug("Processing an event");
         }
 
+        log.info("Adding chunk to result");
         resultBuilder.add((TempChunkResult) event.getData());
 
         if (resultBuilder.finished()) {
+            log.info("Finished");
             return FINISH;
         }
 
