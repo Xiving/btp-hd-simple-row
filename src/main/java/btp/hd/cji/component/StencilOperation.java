@@ -12,6 +12,8 @@ public class StencilOperation {
 
 
     public static TempChunkResult perform(HeatChunkWithHalo chunk) {
+        log.info("Performing stencil operation on chunk:\n{}", chunk.toString());
+
         double maxDifference = 0;
         int height = chunk.height();
         int width = chunk.width();
