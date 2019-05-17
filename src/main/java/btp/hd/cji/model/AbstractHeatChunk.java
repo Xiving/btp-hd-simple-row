@@ -4,9 +4,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-@EqualsAndHashCode(callSuper = true)
 @Data
-@ToString(callSuper = true)
 public abstract class AbstractHeatChunk extends AbstractTempChunk{
 
     private final double[][] cond;
@@ -29,5 +27,10 @@ public abstract class AbstractHeatChunk extends AbstractTempChunk{
         }
 
         this.cond = cond;
+    }
+
+    @Override
+    public String toString() {
+        return super.toString();
     }
 }

@@ -1,12 +1,8 @@
 package btp.hd.cji.model;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
-@EqualsAndHashCode(callSuper = true)
 @Data
-@ToString(callSuper = true)
 public class HeatChunkWithHalo extends AbstractHeatChunk {
 
     public HeatChunkWithHalo(double[][] temp, double[][] cond) {
@@ -33,5 +29,10 @@ public class HeatChunkWithHalo extends AbstractHeatChunk {
 
     public int haloWidth() {
         return super.width();
+    }
+
+    @Override
+    public String toString() {
+        return super.toString();
     }
 }
