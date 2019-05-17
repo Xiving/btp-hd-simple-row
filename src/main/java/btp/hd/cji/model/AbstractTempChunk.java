@@ -22,7 +22,7 @@ public abstract class  AbstractTempChunk implements java.io.Serializable {
 
         for (double[] row: temp) {
             for (double d: row) {
-                str.append(d).append(' ');
+                str.append(String.format("%.3f", d)).append(' ');
             }
 
             str.append('\n');
