@@ -113,7 +113,7 @@ public class HeatDissipatorApp {
                 // submit the vectorAddActivity. Set the parent as well.
                 HeatChunkWithHalo chunk = CylinderChunkBuilder.build(temp, cond);
 
-                log.info("Current chunk: \n {}", chunk.toString());
+                log.info("Current chunk: \n{}", chunk.toString());
 
                 constellation.submit(new DivideConquerActivity(aid, chunk, divideConquerThreshold));
 
@@ -125,6 +125,7 @@ public class HeatDissipatorApp {
                 log.info("Performed stencil operation with max temperature delta {}", result.getMaxDifference());
 
                 temp = result.getTemp();
+                break;
             } while (result.getMaxDifference() > minDifference);
 
             overallTimer.stop(timing);
