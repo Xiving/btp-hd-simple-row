@@ -1,4 +1,4 @@
-/build
-/.gradle
-/gradle
-/scripts
+/build/*
+/.gradle/*
+/gradle/*
+/scripts/*
