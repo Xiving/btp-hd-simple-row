@@ -101,6 +101,8 @@ public class HeatDissipatorApp {
             Timer overallTimer = constellation.getOverallTimer();
             int timing = overallTimer.start();
 
+            int i = 0;
+
             do {
                 // set up the various activities, staring with the main activity:
 
@@ -125,6 +127,11 @@ public class HeatDissipatorApp {
                 log.info("Performed stencil operation with max temperature delta {}", result.getMaxDifference());
 
                 temp = result.getTemp();
+                i++;
+
+                if(i > 3) {
+                    break;
+                }
             } while (result.getMaxDifference() > minDifference);
 
             overallTimer.stop(timing);
