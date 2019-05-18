@@ -1,8 +1,8 @@
 package btp.hd.cji.model;
 
-import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 public class TempResult extends TempChunk {
 
     private final int parentOffset;

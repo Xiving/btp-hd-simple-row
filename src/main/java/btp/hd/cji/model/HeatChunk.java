@@ -1,9 +1,8 @@
 package btp.hd.cji.model;
 
-import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
+import lombok.Getter;
 
-@Data
+@Getter
 public abstract class HeatChunk extends TempChunk {
     private final double[][] cond;
 

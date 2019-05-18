@@ -1,8 +1,8 @@
 package btp.hd.cji.model;
 
-import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 public class Cylinder extends HeatChunk {
 
     private Cylinder(double[][] temp, double[][] cond) {
