@@ -25,7 +25,7 @@ public class HeatDissipatorApp {
         try {
             PrintStream out = new PrintStream("heat-dissipator.out");
 
-            out.println(String.format("Iterations: {}, min temp delta: {}", it, min));
+            out.println(String.format("Iterations: %d, min temp delta: %f", it, min));
 
             for (int i = 0; i < temp.length; i++) {
                 for (int j = 0; j < temp[0].length; j++) {
