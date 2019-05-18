@@ -42,9 +42,10 @@ public class StencilOperationActivity extends Activity {
         log.info("Result of stencil operation:\n{}", result.toString());
 
         timer.stop(timing);
+
         log.info(
             "Performed  a stencil operation of size {} x {} in {} ms",
-            slice.height(), slice.width(), timer.totalTimeVal()
+            slice.height(), slice.width(), timer.totalTimeVal() / 1000
         );
 
         // We are done, indicate that we are ready to cleanup
