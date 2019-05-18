@@ -1,16 +1,22 @@
 package btp.hd.cji;
 
-import btp.hd.cji.Activity.StencilOperationActivity;
-import btp.hd.cji.model.TempResult;
-import btp.hd.cji.model.HeatChunkWithHalo;
 import btp.hd.cji.Activity.DivideConquerActivity;
+import btp.hd.cji.Activity.StencilOperationActivity;
+import btp.hd.cji.model.Cylinder;
+import btp.hd.cji.model.CylinderSlice;
+import btp.hd.cji.model.TempResult;
 import btp.hd.cji.util.HeatValueGenerator;
-import ibis.constellation.*;
+import ibis.constellation.ActivityIdentifier;
+import ibis.constellation.Constellation;
+import ibis.constellation.ConstellationConfiguration;
+import ibis.constellation.ConstellationFactory;
+import ibis.constellation.Context;
+import ibis.constellation.StealStrategy;
+import ibis.constellation.Timer;
 import ibis.constellation.util.SingleEventCollector;
-import lombok.extern.slf4j.Slf4j;
-
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class HeatDissipatorApp {
@@ -103,20 +109,14 @@ public class HeatDissipatorApp {
             int i = 0;
 
             do {
-                // set up the various activities, staring with the main activity:
-
-                // The SingleEventCollector is an activity that waits for a single
-                // event to come in will finish then.
                 SingleEventCollector sec = new SingleEventCollector(new Context(DivideConquerActivity.LABEL));
-
-                // submit the single event collector
                 ActivityIdentifier aid = constellation.submit(sec);
-                // submit the vectorAddActivity. Set the parent as well.
-                HeatChunkWithHalo chunk = CylinderChunkBuilder.build(temp, cond);
 
-                log.info("Current chunk: \n{}", chunk.toString());
+                CylinderSlice slice = Cylinder.of(temp, cond).toSlice();
 
-                constellation.submit(new DivideConquerActivity(aid, chunk, divideConquerThreshold));
+                log.info("Current slice: \n{}", slice.toString());
+
+                constellation.submit(new DivideConquerActivity(aid, slice, divideConquerThreshold));
 
                 log.info("main(), just submitted, about to waitForEvent() "
                         + "for any event with target " + aid);
