@@ -107,7 +107,7 @@ public class HeatDissipatorApp {
             Timer overallTimer = constellation.getOverallTimer();
             int timing = overallTimer.start();
 
-            log.info("Performing stencil operations on:\n{}", result.getTemp());
+            log.info("Performing stencil operations on:\n{}", result.getTemp().toString());
 
             int i = 0;
             do {
