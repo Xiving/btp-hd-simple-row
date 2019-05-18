@@ -1,8 +1,10 @@
 package btp.hd.cji.model;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 @Getter
+@Slf4j
 public class TempResult extends TempChunk {
 
     private final int parentOffset;
@@ -34,6 +36,7 @@ public class TempResult extends TempChunk {
     }
 
     public boolean finished() {
+        log.info("Rows added {}", rowsAdded);
         return rowsAdded >= getTemp().length;
     }
 

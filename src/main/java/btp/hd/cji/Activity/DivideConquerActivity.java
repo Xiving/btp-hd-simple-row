@@ -75,11 +75,11 @@ public class DivideConquerActivity extends Activity {
             log.debug("Processing an event");
         }
 
-        log.debug("Adding chunk to result");
+        log.info("Adding chunk to result");
         result.add((TempResult) event.getData());
 
         if (result.finished()) {
-            log.debug("Finished result");
+            log.info("Finished result");
             return FINISH;
         }
 
