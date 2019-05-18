@@ -16,15 +16,16 @@ import ibis.constellation.Timer;
 import ibis.constellation.util.SingleEventCollector;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
-import java.util.Arrays;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class HeatDissipatorApp {
 
-    public static void writeFile(double[][] temp) {
+    public static void writeFile(int it, double min, double[][] temp) {
         try {
             PrintStream out = new PrintStream("heat-dissipator.out");
+
+            out.println(String.format("Iterations: {}, min temp delta: {}", it, min));
 
             for (int i = 0; i < temp.length; i++) {
                 for (int j = 0; j < temp[0].length; j++) {
@@ -137,7 +138,7 @@ public class HeatDissipatorApp {
 
             log.info("Result after {} iteration(s) and {} ms:\n{}", i, overallTimer.totalTimeVal(),
                 result.toString());
-            writeFile(result.getTemp());
+            writeFile(i, minDifference, result.getTemp());
         }
         log.debug("calling Constellation.done()");
         constellation.done();
