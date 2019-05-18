@@ -1,62 +1,69 @@
 package btp.hd.cji.Activity;
 
-import btp.hd.cji.model.HeatChunkWithHalo;
-import btp.hd.cji.model.TempChunkResult;
-import btp.hd.cji.component.HeatChunkSplitter;
-import btp.hd.cji.component.ResultBuilder;
-import ibis.constellation.*;
+import btp.hd.cji.model.CylinderSlice;
+import btp.hd.cji.model.TempResult;
+import ibis.constellation.Activity;
+import ibis.constellation.ActivityIdentifier;
+import ibis.constellation.Constellation;
+import ibis.constellation.Context;
+import ibis.constellation.Event;
+import ibis.constellation.NoSuitableExecutorException;
+import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class DivideConquerActivity extends Activity {
 
-    public static final String LABEL = "divideAndConquerActivity";
+    public static final String LABEL = "divideAndConquer";
 
     private static final boolean EXPECT_EVENTS = true;
 
     private final ActivityIdentifier parent;
-    private final HeatChunkWithHalo chunk;
+    private final CylinderSlice slice;
     private final int threshold;
 
-    private ResultBuilder resultBuilder;
-    private boolean splitChunk = false;
+    private TempResult result;
 
-    public DivideConquerActivity(ActivityIdentifier parent, HeatChunkWithHalo chunk, int threshold) {
+    public DivideConquerActivity(ActivityIdentifier parent, CylinderSlice slice, int threshold) {
         super(new Context(LABEL), EXPECT_EVENTS);
 
         this.parent = parent;
-        this.chunk = chunk;
+        this.slice = slice;
         this.threshold = threshold;
 
-        log.info("Created divide and conquer activity with chunk of size {} x {}", chunk.height(), chunk.width());
+        log.info("Created '{}' activity with size {} x {}", LABEL, slice.height(), slice.width());
     }
 
     @Override
     public int initialize(Constellation cons) {
-        if(chunk.height() <= threshold) {
-            log.debug("Chunk with height {} is small enough to be calculated", chunk.height());
+        if(slice.height() <= threshold) {
+            log.debug("Slice with height {} is small enough to be calculated", slice.height());
 
             try {
-                cons.submit(new StencilOperationActivity(parent, chunk));
+                cons.submit(new StencilOperationActivity(parent, slice));
             } catch (NoSuitableExecutorException e) {
                 e.printStackTrace();
             }
 
             return FINISH;
         } else {
-            log.debug("Chunk with height {} is too big. Will be split into smaller chunks", chunk.height());
-            resultBuilder = new ResultBuilder(chunk.height(), chunk.width(), chunk.getOffsetInParent());
-            HeatChunkSplitter splitter = new HeatChunkSplitter(chunk);
-            splitChunk = true;
+            log.debug("Slice with height {} is too big. Will be split into smaller slices", slice.height());
 
-            try {
-                cons.submit(new DivideConquerActivity(identifier(), splitter.getTop(), threshold));
-                cons.submit(new DivideConquerActivity(identifier(), splitter.getBot(), threshold));
-            } catch (NoSuitableExecutorException e) {
-                e.printStackTrace();
-            }
+            int half = (int) Math.ceil((double) slice.height() / 2);
+            submit(cons, slice, 0, half + 1);
+            submit(cons, slice, half - 1, slice.height());
 
             return SUSPEND;
+        }
+    }
+
+    private void submit(Constellation cons, CylinderSlice slice, int begin, int end) {
+        CylinderSlice sliceToSubmit = CylinderSlice.of(slice, begin, end);
+
+        try {
+            cons.submit( new DivideConquerActivity(identifier(), sliceToSubmit, threshold));
+        } catch (NoSuitableExecutorException e) {
+            e.printStackTrace();
         }
     }
 
@@ -66,11 +73,11 @@ public class DivideConquerActivity extends Activity {
             log.debug("Processing an event");
         }
 
-        log.info("Adding chunk to result");
-        resultBuilder.add((TempChunkResult) event.getData());
+        log.debug("Adding chunk to result");
+        result.add((TempResult) event.getData());
 
-        if (resultBuilder.finished()) {
-            log.info("Finished");
+        if (result.finished()) {
+            log.debug("Finished result");
             return FINISH;
         }
 
@@ -79,9 +86,9 @@ public class DivideConquerActivity extends Activity {
 
     @Override
     public void cleanup(Constellation cons) {
-        if(splitChunk) {
-            log.debug("Sending an event to my parent");
-            cons.send(new Event(identifier(), parent, resultBuilder.getResult()));
+        if(Objects.nonNull(result)) {
+            log.debug("Sending result to my parent");
+            cons.send(new Event(identifier(), parent, result));
         }
     }
 }

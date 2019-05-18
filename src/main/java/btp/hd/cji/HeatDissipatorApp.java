@@ -1,8 +1,7 @@
 package btp.hd.cji;
 
 import btp.hd.cji.Activity.StencilOperationActivity;
-import btp.hd.cji.component.CylinderChunkBuilder;
-import btp.hd.cji.model.TempChunkResult;
+import btp.hd.cji.model.TempResult;
 import btp.hd.cji.model.HeatChunkWithHalo;
 import btp.hd.cji.Activity.DivideConquerActivity;
 import btp.hd.cji.util.HeatValueGenerator;
@@ -96,7 +95,7 @@ public class HeatDissipatorApp {
             double[][] temp = heatValueGenerator.getTemp();
             double[][] cond = heatValueGenerator.getCond();
 
-            TempChunkResult result;
+            TempResult result;
 
             Timer overallTimer = constellation.getOverallTimer();
             int timing = overallTimer.start();
@@ -121,7 +120,7 @@ public class HeatDissipatorApp {
 
                 log.info("main(), just submitted, about to waitForEvent() "
                         + "for any event with target " + aid);
-                result = (TempChunkResult) sec.waitForEvent().getData();
+                result = (TempResult) sec.waitForEvent().getData();
                 log.info("main(), done with waitForEvent() on identifier " + aid);
 
                 log.info("Performed stencil operation with max temperature delta {}", result.getMaxDifference());

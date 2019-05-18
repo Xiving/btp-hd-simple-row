@@ -1,9 +1,13 @@
 package btp.hd.cji.Activity;
 
-import btp.hd.cji.model.TempChunkResult;
-import btp.hd.cji.model.HeatChunkWithHalo;
-import btp.hd.cji.component.StencilOperation;
-import ibis.constellation.*;
+import btp.hd.cji.model.CylinderSlice;
+import btp.hd.cji.model.TempResult;
+import ibis.constellation.Activity;
+import ibis.constellation.ActivityIdentifier;
+import ibis.constellation.Constellation;
+import ibis.constellation.Context;
+import ibis.constellation.Event;
+import ibis.constellation.Timer;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -14,15 +18,17 @@ public class StencilOperationActivity extends Activity {
     private static final boolean EXPECT_EVENTS = false;
 
     private final ActivityIdentifier parent;
-    private final HeatChunkWithHalo chunk;
+    private final CylinderSlice slice;
 
-    private TempChunkResult result;
+    private TempResult result;
 
-    public StencilOperationActivity(ActivityIdentifier parent, HeatChunkWithHalo chunk) {
+    public StencilOperationActivity(ActivityIdentifier parent, CylinderSlice slice) {
         super(new Context(LABEL), EXPECT_EVENTS);
 
         this.parent = parent;
-        this.chunk = chunk;
+        this.slice = slice;
+
+        log.info("Created '{}' activity with size {} x {}", LABEL, slice.height(), slice.width());
     }
 
     @Override
@@ -31,13 +37,13 @@ public class StencilOperationActivity extends Activity {
         Timer timer = cons.getTimer("java", executor, "stencil operation");
         int timing = timer.start();
 
-        log.info("Performing a stencil operation of size {} x {}", chunk.height(), chunk.width());
-
-        result = StencilOperation.perform(chunk);
+        result = slice.result();
 
         timer.stop(timing);
-
-        log.info("Finished stencil operation in {} ms'", timer.totalTimeVal());
+        log.info(
+            "Performed  a stencil operation of size {} x {} in {} ms",
+            slice.height(), slice.width(), timer.totalTimeVal()
+        );
 
         // We are done, indicate that we are ready to cleanup
         return FINISH;
