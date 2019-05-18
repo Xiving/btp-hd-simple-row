@@ -102,17 +102,17 @@ public class HeatDissipatorApp {
             double[][] temp = heatValueGenerator.getTemp();
             double[][] cond = heatValueGenerator.getCond();
 
-            TempResult result;
+            TempResult result = TempResult.of(temp, 0, 0);
 
             Timer overallTimer = constellation.getOverallTimer();
             int timing = overallTimer.start();
 
-            SingleEventCollector sec = new SingleEventCollector(new Context(DivideConquerActivity.LABEL));
-            ActivityIdentifier aid = constellation.submit(sec);
-
             int i = 0;
             do {
-                log.info("Iteration {}:\n{}", i, Arrays.deepToString(temp));
+                log.info("Iteration {}:\n{}", i, result.toString());
+
+                SingleEventCollector sec = new SingleEventCollector(new Context(DivideConquerActivity.LABEL));
+                ActivityIdentifier aid = constellation.submit(sec);
 
                 CylinderSlice slice = Cylinder.of(temp, cond).toSlice();
                 constellation.submit(new DivideConquerActivity(aid, slice, divideConquerThreshold));
