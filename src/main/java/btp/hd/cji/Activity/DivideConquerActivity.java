@@ -49,7 +49,7 @@ public class DivideConquerActivity extends Activity {
         } else {
             log.debug("Slice with height {} is too big. Will be split into smaller slices", slice.height());
 
-            result = new TempResult(slice.height(), slice.width(), slice.getParentOffset());
+            result = TempResult.of(slice);
 
             int half = (int) Math.ceil((double) slice.height() / 2);
             submit(cons, slice, 0, half + 1);

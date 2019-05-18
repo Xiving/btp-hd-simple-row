@@ -19,7 +19,7 @@ public class TempResult extends TempChunk {
         this.rowsAdded = temp.length;
     }
 
-    public TempResult(int height, int width, int parentOffset) {
+    private TempResult(int height, int width, int parentOffset) {
         super(new double[height][width]);
         this.parentOffset = parentOffset;
         this.maxDifference = 0;
@@ -28,6 +28,10 @@ public class TempResult extends TempChunk {
 
     public static TempResult of(double[][] temp, int offsetFromParent, double maxDifference) {
         return new TempResult(temp, offsetFromParent, maxDifference);
+    }
+
+    public static TempResult of(CylinderSlice slice) {
+        return new TempResult(slice.height() - 2, slice.width() - 2, slice.getParentOffset());
     }
 
     public void add(TempResult result) {
