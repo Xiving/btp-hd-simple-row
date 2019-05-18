@@ -27,7 +27,7 @@ public abstract class TempChunk implements java.io.Serializable {
             str.append('\n');
         }
 
-        return str.toString();
+        return str.deleteCharAt(str.length() - 1).toString();
     }
 
 }

@@ -28,7 +28,7 @@ public abstract class HeatChunk extends TempChunk {
             str.append('\n');
         }
 
-        return str.toString();
+        return str.deleteCharAt(str.length() - 1).toString();
     }
 
 }
