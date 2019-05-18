@@ -114,7 +114,7 @@ public class HeatDissipatorApp {
 
                 CylinderSlice slice = Cylinder.of(temp, cond).toSlice();
 
-                log.info("Current slice: \n{}", slice.toString());
+                log.info("Iteration {}: \n{}", i, slice.toString());
 
                 constellation.submit(new DivideConquerActivity(aid, slice, divideConquerThreshold));
 
@@ -127,10 +127,6 @@ public class HeatDissipatorApp {
 
                 temp = result.getTemp();
                 i++;
-
-                if(i > 3) {
-                    break;
-                }
             } while (result.getMaxDifference() > minDifference);
 
             overallTimer.stop(timing);
