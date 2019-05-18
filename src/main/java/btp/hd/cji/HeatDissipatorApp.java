@@ -40,7 +40,7 @@ public class HeatDissipatorApp {
 
     public static void main(String[] args) throws Exception {
 
-        int divideConquerThreshold = 5;
+        int divideConquerThreshold = 8;
         int nrExecutorsPerNode = 4;
         double minDifference = 10;
         int height = 10;
