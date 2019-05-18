@@ -34,7 +34,7 @@ public class DivideConquerActivity extends Activity {
         this.slice = slice;
         this.threshold = threshold;
 
-        log.info("Created '{}' activity with size {} x {}", LABEL, slice.height(), slice.width());
+        log.info("Created '{}' activity with size {} x {}", LABEL, slice.height() - 2, slice.width() - 2);
     }
 
     @Override

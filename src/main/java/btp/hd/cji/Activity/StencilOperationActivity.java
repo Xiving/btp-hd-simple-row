@@ -28,7 +28,7 @@ public class StencilOperationActivity extends Activity {
         this.parent = parent;
         this.slice = slice;
 
-        log.info("Created '{}' activity with size {} x {}", LABEL, slice.height(), slice.width());
+        log.info("Created '{}' activity with size {} x {}", LABEL, slice.height() - 2, slice.width() - 2);
     }
 
     @Override
