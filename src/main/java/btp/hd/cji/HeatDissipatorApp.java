@@ -16,6 +16,7 @@ import ibis.constellation.Timer;
 import ibis.constellation.util.SingleEventCollector;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.util.Arrays;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -106,22 +107,19 @@ public class HeatDissipatorApp {
             Timer overallTimer = constellation.getOverallTimer();
             int timing = overallTimer.start();
 
-            int i = 0;
+            SingleEventCollector sec = new SingleEventCollector(new Context(DivideConquerActivity.LABEL));
+            ActivityIdentifier aid = constellation.submit(sec);
 
+            int i = 0;
             do {
-                SingleEventCollector sec = new SingleEventCollector(new Context(DivideConquerActivity.LABEL));
-                ActivityIdentifier aid = constellation.submit(sec);
+                log.info("Iteration {}:\n{}", i, Arrays.deepToString(temp));
 
                 CylinderSlice slice = Cylinder.of(temp, cond).toSlice();
-
-                log.info("Iteration {}: \n{}", i, slice.toString());
-
                 constellation.submit(new DivideConquerActivity(aid, slice, divideConquerThreshold));
 
-                log.info("main(), just submitted, about to waitForEvent() "
-                        + "for any event with target " + aid);
+                log.debug("main(), just submitted, about to waitForEvent() for any event with target " + aid);
                 result = (TempResult) sec.waitForEvent().getData();
-                log.info("main(), done with waitForEvent() on identifier " + aid);
+                log.debug("main(), done with waitForEvent() on identifier " + aid);
 
                 log.info("Performed stencil operation with max temperature delta {}", result.getMaxDifference());
 
@@ -131,6 +129,7 @@ public class HeatDissipatorApp {
 
             overallTimer.stop(timing);
 
+            log.info("Result after {} iteration(s) and {} ms:\n{}", i, result.toString(), overallTimer.totalTimeVal());
             writeFile(result.getTemp());
         }
         log.debug("calling Constellation.done()");
