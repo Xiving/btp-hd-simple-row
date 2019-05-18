@@ -37,9 +37,9 @@ public class StencilOperationActivity extends Activity {
         Timer timer = cons.getTimer("java", executor, "stencil operation");
         int timing = timer.start();
 
-        log.info("Performing stencil operation on:\n{}", slice.toString());
+        log.debug("Performing stencil operation on:\n{}", slice.toString());
         result = slice.result();
-        log.info("Result of stencil operation:\n{}", result.toString());
+        log.debug("Result of stencil operation:\n{}", result.toString());
 
         timer.stop(timing);
 
