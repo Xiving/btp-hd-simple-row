@@ -50,8 +50,8 @@ public class CylinderSlice extends HeatChunk {
         log.info("Performing stencil operation on:\n{}", this.toString());
 
         double maxDifference = 0;
-        int height = height();
-        int width = width();
+        int height = height() - 2;
+        int width = width() - 2;
         double[][] temp = getTemp();
         double[][] cond = getCond();
 
