@@ -107,9 +107,10 @@ public class HeatDissipatorApp {
             Timer overallTimer = constellation.getOverallTimer();
             int timing = overallTimer.start();
 
+            log.info("Performing stencil operations on:\n{}", result.getTemp());
+
             int i = 0;
             do {
-                log.info("Iteration {}:\n{}", i, result.toString());
 
                 SingleEventCollector sec = new SingleEventCollector(
                     new Context(DivideConquerActivity.LABEL));
@@ -129,6 +130,7 @@ public class HeatDissipatorApp {
 
                 temp = result.getTemp();
                 i++;
+                log.debug("Iteration {}:\n{}", i, result.toString());
             } while (result.getMaxDifference() > minDifference);
 
             overallTimer.stop(timing);
