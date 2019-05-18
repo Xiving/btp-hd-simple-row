@@ -47,8 +47,6 @@ public class CylinderSlice extends HeatChunk {
     }
 
     public TempResult result() {
-        log.info("Performing stencil operation on:\n{}", this.toString());
-
         double maxDifference = 0;
         int height = height() - 2;
         int width = width() - 2;
@@ -70,8 +68,6 @@ public class CylinderSlice extends HeatChunk {
         }
 
         TempResult resultChunk = TempResult.of(result, parentOffset, maxDifference);
-        log.info("Result of stencil operation:\n{}", resultChunk.toString());
-
         return resultChunk;
     }
 
