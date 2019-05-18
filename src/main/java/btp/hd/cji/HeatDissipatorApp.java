@@ -63,10 +63,10 @@ public class HeatDissipatorApp {
                 width = Integer.parseInt(args[i]);
             } else {
                 throw new Error("Usage: java HeatDissipatorApp "
-                        + "[ -nrExecutorsPerNode <num> ] "
-                        + "[ -minDifference <num> ] "
-                        + "[ -h <height> ]"
-                        + "[ -w <width> ]");
+                    + "[ -nrExecutorsPerNode <num> ] "
+                    + "[ -minDifference <num> ] "
+                    + "[ -h <height> ]"
+                    + "[ -w <width> ]");
             }
         }
 
@@ -79,17 +79,17 @@ public class HeatDissipatorApp {
 
         // Initialize Constellation with the following configurations
         ConstellationConfiguration config1 =
-                new ConstellationConfiguration(new Context(DivideConquerActivity.LABEL),
-                        StealStrategy.SMALLEST, StealStrategy.BIGGEST,
-                        StealStrategy.BIGGEST);
+            new ConstellationConfiguration(new Context(DivideConquerActivity.LABEL),
+                StealStrategy.SMALLEST, StealStrategy.BIGGEST,
+                StealStrategy.BIGGEST);
 
         ConstellationConfiguration config2 =
-                new ConstellationConfiguration(new Context(StencilOperationActivity.LABEL),
-                        StealStrategy.SMALLEST, StealStrategy.BIGGEST,
-                        StealStrategy.BIGGEST);
+            new ConstellationConfiguration(new Context(StencilOperationActivity.LABEL),
+                StealStrategy.SMALLEST, StealStrategy.BIGGEST,
+                StealStrategy.BIGGEST);
 
         Constellation constellation =
-                ConstellationFactory.createConstellation(config1, config2);
+            ConstellationFactory.createConstellation(config1, config2);
 
         constellation.activate();
 
@@ -111,17 +111,21 @@ public class HeatDissipatorApp {
             do {
                 log.info("Iteration {}:\n{}", i, result.toString());
 
-                SingleEventCollector sec = new SingleEventCollector(new Context(DivideConquerActivity.LABEL));
+                SingleEventCollector sec = new SingleEventCollector(
+                    new Context(DivideConquerActivity.LABEL));
                 ActivityIdentifier aid = constellation.submit(sec);
 
                 CylinderSlice slice = Cylinder.of(temp, cond).toSlice();
                 constellation.submit(new DivideConquerActivity(aid, slice, divideConquerThreshold));
 
-                log.debug("main(), just submitted, about to waitForEvent() for any event with target " + aid);
+                log.debug(
+                    "main(), just submitted, about to waitForEvent() for any event with target "
+                        + aid);
                 result = (TempResult) sec.waitForEvent().getData();
                 log.debug("main(), done with waitForEvent() on identifier " + aid);
 
-                log.info("Performed stencil operation with max temperature delta {}", result.getMaxDifference());
+                log.info("Performed stencil operation with max temperature delta {}",
+                    result.getMaxDifference());
 
                 temp = result.getTemp();
                 i++;
@@ -129,7 +133,8 @@ public class HeatDissipatorApp {
 
             overallTimer.stop(timing);
 
-            log.info("Result after {} iteration(s) and {} ms:\n{}", i, result.toString(), overallTimer.totalTimeVal());
+            log.info("Result after {} iteration(s) and {} ms:\n{}", i, overallTimer.totalTimeVal(),
+                result.toString());
             writeFile(result.getTemp());
         }
         log.debug("calling Constellation.done()");
