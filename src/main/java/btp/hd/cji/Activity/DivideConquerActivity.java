@@ -90,7 +90,7 @@ public class DivideConquerActivity extends Activity {
 
         if (result.finished()) {
             timer.stop(timerId);
-            log.debug("Performed  a stencil operation of size {} x {} in {} ms",
+            log.info("Performed  a stencil operation of size {} x {} in {} ms",
                 slice.height(), slice.width(), timer.totalTimeVal() / 1000);
             return FINISH;
         }
