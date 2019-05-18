@@ -1,2 +1,2 @@
 ./gradlew installDist
-./build/install/btp-hd-cji/bin/heat-dissipator.local $1, $2, shift, if [ $# -ne 3 ]
+./build/install/btp-hd-cji/bin/heat-dissipator.local $@
