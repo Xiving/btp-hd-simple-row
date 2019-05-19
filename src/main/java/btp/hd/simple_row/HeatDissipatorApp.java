@@ -1,11 +1,11 @@
-package btp.hd.cji;
+package btp.hd.simple_row;
 
-import btp.hd.cji.Activity.DivideConquerActivity;
-import btp.hd.cji.Activity.StencilOperationActivity;
-import btp.hd.cji.model.Cylinder;
-import btp.hd.cji.model.CylinderSlice;
-import btp.hd.cji.model.TempResult;
-import btp.hd.cji.util.HeatValueGenerator;
+import btp.hd.simple_row.Activity.DivideConquerActivity;
+import btp.hd.simple_row.Activity.StencilOperationActivity;
+import btp.hd.simple_row.model.Cylinder;
+import btp.hd.simple_row.model.CylinderSlice;
+import btp.hd.simple_row.model.TempResult;
+import btp.hd.simple_row.util.HeatValueGenerator;
 import ibis.constellation.ActivityIdentifier;
 import ibis.constellation.Constellation;
 import ibis.constellation.ConstellationConfiguration;

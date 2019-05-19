@@ -1,4 +1,4 @@
-package btp.hd.cji.util;
+package btp.hd.simple_row.util;
 
 import java.io.*;
 import java.util.Objects;

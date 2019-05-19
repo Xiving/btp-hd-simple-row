@@ -1,7 +1,7 @@
-package btp.hd.cji.Activity;
+package btp.hd.simple_row.Activity;
 
-import btp.hd.cji.model.CylinderSlice;
-import btp.hd.cji.model.TempResult;
+import btp.hd.simple_row.model.CylinderSlice;
+import btp.hd.simple_row.model.TempResult;
 import ibis.constellation.Activity;
 import ibis.constellation.ActivityIdentifier;
 import ibis.constellation.Constellation;
