@@ -6,13 +6,7 @@ import btp.hd.simple_row.model.Cylinder;
 import btp.hd.simple_row.model.CylinderSlice;
 import btp.hd.simple_row.model.TempResult;
 import btp.hd.simple_row.util.HeatValueGenerator;
-import ibis.constellation.ActivityIdentifier;
-import ibis.constellation.Constellation;
-import ibis.constellation.ConstellationConfiguration;
-import ibis.constellation.ConstellationFactory;
-import ibis.constellation.Context;
-import ibis.constellation.StealStrategy;
-import ibis.constellation.Timer;
+import ibis.constellation.*;
 import ibis.constellation.util.SingleEventCollector;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
@@ -78,19 +72,17 @@ public class HeatDissipatorApp {
 
         log.info("HeatDissipatorApp, running with dimensions {} x {}:", height, width);
 
+        OrContext orContext = new OrContext(new Context(StencilOperationActivity.LABEL), new Context(DivideConquerActivity.LABEL));
+
         // Initialize Constellation with the following configurations
-        ConstellationConfiguration config1 =
-            new ConstellationConfiguration(new Context(DivideConquerActivity.LABEL),
+        ConstellationConfiguration config =
+            new ConstellationConfiguration(orContext,
                 StealStrategy.SMALLEST, StealStrategy.BIGGEST,
                 StealStrategy.BIGGEST);
 
-        ConstellationConfiguration config2 =
-            new ConstellationConfiguration(new Context(StencilOperationActivity.LABEL),
-                StealStrategy.SMALLEST, StealStrategy.BIGGEST,
-                StealStrategy.BIGGEST);
 
         Constellation constellation =
-            ConstellationFactory.createConstellation(config1, config2);
+            ConstellationFactory.createConstellation(config , nrExecutorsPerNode);
 
         constellation.activate();
 
