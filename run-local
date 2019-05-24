@@ -1,0 +1,2 @@
+./gradlew installDist
+./build/install/btp-hd-simple-row/bin/heat-dissipator.local $@
