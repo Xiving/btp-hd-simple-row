@@ -23,7 +23,7 @@ check_env CONSTELLATION_PORT
 
 ruby $BIN_DIR/submit-on-nodes.das5.rb \
      $SIMPLE_ROW_DIR \
-     lib/vector-add-constellation.jar \
+     lib/btp-hd-simple-row.jar \
      btp.hd.simple_row.HeatDissipatorApp \
      "$config_args" \
      "$@"
