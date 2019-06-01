@@ -27,6 +27,7 @@ public class DivideConquerActivity extends Activity {
     private Timer timer;
     private int timerId;
 
+
     public DivideConquerActivity(ActivityIdentifier parent, CylinderSlice slice, int threshold) {
         super(new Context(LABEL), EXPECT_EVENTS);
 
