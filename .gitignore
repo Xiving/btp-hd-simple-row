@@ -1,3 +1,5 @@
 build/
 .gradle/
-gradle/R
+gradle/
+scripts/
+heat-dissipator.out
