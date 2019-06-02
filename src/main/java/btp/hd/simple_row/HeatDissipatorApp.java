@@ -4,6 +4,7 @@ import btp.hd.simple_row.Activity.DivideConquerActivity;
 import btp.hd.simple_row.Activity.StencilOperationActivity;
 import btp.hd.simple_row.model.Cylinder;
 import btp.hd.simple_row.model.CylinderSlice;
+import btp.hd.simple_row.model.TempChunk;
 import btp.hd.simple_row.model.TempResult;
 import btp.hd.simple_row.util.HeatValueGenerator;
 import ibis.constellation.*;
@@ -15,19 +16,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class HeatDissipatorApp {
 
-    public static void writeFile(int it, double min, double[][] temp) {
+    public static void writeFile(int it, double min, int w, int h, double ms, TempChunk temp) {
         try {
             PrintStream out = new PrintStream("heat-dissipator.out");
 
             out.println(String.format("Iterations: %d, min temp delta: %f", it, min));
-
-            for (int i = 0; i < temp.length; i++) {
-                for (int j = 0; j < temp[0].length; j++) {
-                    out.print(temp[i][j] + " ");
-                }
-
-                out.println();
-            }
+            out.println(String.format("Dimensions: %d x %d, time: %f ms\n", h, w, ms));
+            out.println(temp.toString());
             out.close();
         } catch (FileNotFoundException e) {
             log.error(e.getMessage());
@@ -130,7 +125,7 @@ public class HeatDissipatorApp {
 
             log.info("Result after {} iteration(s) and {} ms:\n{}", i, overallTimer.totalTimeVal(),
                 result.toString());
-            writeFile(i, minDifference, result.getTemp());
+            writeFile(i, minDifference, width, height, overallTimer.totalTimeVal(), result);
         }
         log.debug("calling Constellation.done()");
         constellation.done();
