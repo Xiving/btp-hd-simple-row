@@ -33,7 +33,7 @@ public class HeatDissipatorApp {
 
         int divideConquerThreshold = 16;
         int nrExecutorsPerNode = 1;
-        double minDifference = 10;
+        double minDifference = 1;
         int height = 10;
         int width = 10;
         int nrNodes = 1;
@@ -42,7 +42,7 @@ public class HeatDissipatorApp {
             if (args[i].equals("-nrExecutorsPerNode")) {
                 i++;
                 nrExecutorsPerNode = Integer.parseInt(args[i]);
-            } else if (args[i].equals("-minDifference")) {
+            } else if (args[i].equals("-m")) {
                 i++;
                 minDifference = Double.parseDouble(args[i]);
             } else if (args[i].equals("-h")) {
@@ -51,7 +51,10 @@ public class HeatDissipatorApp {
             } else if (args[i].equals("-w")) {
                 i++;
                 width = Integer.parseInt(args[i]);
-            } else {
+            } else if (args[i].equals("-t")) {
+                i++;
+                divideConquerThreshold = Integer.parseInt(args[i]);
+            }else {
                 throw new Error("Usage: java HeatDissipatorApp "
                     + "[ -nrExecutorsPerNode <num> ] "
                     + "[ -minDifference <num> ] "
