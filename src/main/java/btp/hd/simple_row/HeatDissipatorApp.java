@@ -21,7 +21,7 @@ public class HeatDissipatorApp {
             PrintStream out = new PrintStream("heat-dissipator.out");
 
             out.println(String.format("Iterations: %d, min temp delta: %f", it, min));
-            out.println(String.format("Dimensions: %d x %d, time: %f ms\n", h, w, ms / 1000));
+            out.println(String.format("Dimensions: %d x %d, time: %f ms\n", h, w, ms));
             out.println(temp.toString());
             out.close();
         } catch (FileNotFoundException e) {
