@@ -1,12 +1,12 @@
-package btp.hd.simpe_row;
+package btp.hd.simple_row;
 
-import btp.hd.simpe_row.Activity.DivideConquerActivity;
-import btp.hd.simpe_row.Activity.StencilOperationActivity;
-import btp.hd.simpe_row.model.Cylinder;
-import btp.hd.simpe_row.model.CylinderSlice;
-import btp.hd.simpe_row.model.TempChunk;
-import btp.hd.simpe_row.model.TempResult;
-import btp.hd.simpe_row.util.HeatValueGenerator;
+import btp.hd.simple_row.Activity.DivideConquerActivity;
+import btp.hd.simple_row.Activity.StencilOperationActivity;
+import btp.hd.simple_row.model.Cylinder;
+import btp.hd.simple_row.model.CylinderSlice;
+import btp.hd.simple_row.model.TempChunk;
+import btp.hd.simple_row.model.TempResult;
+import btp.hd.simple_row.util.HeatValueGenerator;
 import ibis.constellation.*;
 import ibis.constellation.util.SingleEventCollector;
 import java.io.FileNotFoundException;
