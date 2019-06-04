@@ -119,9 +119,9 @@ public class HeatDissipatorApp {
 
             overallTimer.stop(timing);
 
-            log.info("Result after {} iteration(s) and {} ms:\n{}", i, overallTimer.totalTimeVal(),
+            log.info("Result after {} iteration(s) and {} ms:\n{}", i, overallTimer.totalTimeVal() / 1000,
                 result.toString());
-            writeFile(i, minDifference, width, height, overallTimer.totalTimeVal(), result);
+            writeFile(i, minDifference, width, height, overallTimer.totalTimeVal() /1000, result);
         }
         log.debug("calling Constellation.done()");
         constellation.done();
