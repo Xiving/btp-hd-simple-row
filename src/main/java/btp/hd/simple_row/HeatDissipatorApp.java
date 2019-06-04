@@ -34,10 +34,9 @@ public class HeatDissipatorApp {
         int divideConquerThreshold = 16;
         int maxIterations = Integer.MAX_VALUE;
         int nrExecutorsPerNode = 1;
-        double minDifference = 1;
+        double minDifference = 10;
         int height = 10;
         int width = 10;
-        int nrNodes = 1;
 
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("-d")) {
@@ -61,10 +60,6 @@ public class HeatDissipatorApp {
             }
         }
 
-        String ibisPoolSize = System.getProperty("ibis.pool.size");
-        if (ibisPoolSize != null) {
-            nrNodes = Integer.parseInt(ibisPoolSize);
-        }
 
         log.info("HeatDissipatorApp, running with dimensions {} x {}:", height, width);
 
@@ -86,7 +81,7 @@ public class HeatDissipatorApp {
             // This is master specific code.  The rest is going to call
             // Constellation.done(), waiting for Activities to steal.
 
-            HeatValueGenerator heatValueGenerator = new HeatValueGenerator(height, width, 0.2, 100);
+            HeatValueGenerator heatValueGenerator = new HeatValueGenerator(height, width, 0.05, 100);
 
             double[][] temp = heatValueGenerator.getTemp();
             double[][] cond = heatValueGenerator.getCond();
