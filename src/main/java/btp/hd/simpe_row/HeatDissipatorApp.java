@@ -1,12 +1,12 @@
-package btp.hd.simple_row;
+package btp.hd.simpe_row;
 
-import btp.hd.simple_row.Activity.DivideConquerActivity;
-import btp.hd.simple_row.Activity.StencilOperationActivity;
-import btp.hd.simple_row.model.Cylinder;
-import btp.hd.simple_row.model.CylinderSlice;
-import btp.hd.simple_row.model.TempChunk;
-import btp.hd.simple_row.model.TempResult;
-import btp.hd.simple_row.util.HeatValueGenerator;
+import btp.hd.simpe_row.Activity.DivideConquerActivity;
+import btp.hd.simpe_row.Activity.StencilOperationActivity;
+import btp.hd.simpe_row.model.Cylinder;
+import btp.hd.simpe_row.model.CylinderSlice;
+import btp.hd.simpe_row.model.TempChunk;
+import btp.hd.simpe_row.model.TempResult;
+import btp.hd.simpe_row.util.HeatValueGenerator;
 import ibis.constellation.*;
 import ibis.constellation.util.SingleEventCollector;
 import java.io.FileNotFoundException;
@@ -32,6 +32,7 @@ public class HeatDissipatorApp {
     public static void main(String[] args) throws Exception {
 
         int divideConquerThreshold = 16;
+        int maxIterations = Integer.MAX_VALUE;
         int nrExecutorsPerNode = 1;
         double minDifference = 1;
         int height = 10;
@@ -39,27 +40,24 @@ public class HeatDissipatorApp {
         int nrNodes = 1;
 
         for (int i = 0; i < args.length; i++) {
-            if (args[i].equals("-nrExecutorsPerNode")) {
-                i++;
-                nrExecutorsPerNode = Integer.parseInt(args[i]);
-            } else if (args[i].equals("-m")) {
+            if (args[i].equals("-d")) {
                 i++;
                 minDifference = Double.parseDouble(args[i]);
+            } else if (args[i].equals("-m")) {
+                i++;
+                maxIterations = Integer.parseInt(args[i]);
             } else if (args[i].equals("-h")) {
                 i++;
                 height = Integer.parseInt(args[i]);
             } else if (args[i].equals("-w")) {
                 i++;
                 width = Integer.parseInt(args[i]);
-            } else if (args[i].equals("-t")) {
-                i++;
-                divideConquerThreshold = Integer.parseInt(args[i]);
-            }else {
+            } else {
                 throw new Error("Usage: java HeatDissipatorApp "
-                    + "[ -nrExecutorsPerNode <num> ] "
-                    + "[ -minDifference <num> ] "
-                    + "[ -h <height> ]"
-                    + "[ -w <width> ]");
+                        + "[ -d <num> ] minimum temp delta"
+                        + "[ -m <num> ] maximum iterations"
+                        + "[ -h <height> ]"
+                        + "[ -w <width> ]");
             }
         }
 
@@ -122,7 +120,7 @@ public class HeatDissipatorApp {
                 temp = result.getTemp();
                 i++;
                 log.debug("Iteration {}:\n{}", i, result.toString());
-            } while (result.getMaxDifference() > minDifference);
+            } while (result.getMaxDifference() > minDifference && i < maxIterations);
 
             overallTimer.stop(timing);
 
