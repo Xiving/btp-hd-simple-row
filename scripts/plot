@@ -1,0 +1,7 @@
+#!/bin/bash
+
+TEMP_FILE=$(mktemp)
+
+python2 $COMMON_SOURCE_IDENTIFICATION_CASHMERE_MEASUREMENTS_DIR/scripts/gantt.py $* > $TEMP_FILE
+gnuplot -persist $TEMP_FILE
+/bin/rm -f $TEMP_FILE
