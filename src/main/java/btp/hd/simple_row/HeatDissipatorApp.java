@@ -32,7 +32,6 @@ public class HeatDissipatorApp {
 
     public static void main(String[] args) throws Exception {
 
-        int divideConquerThreshold = 16;
         int maxIterations = Integer.MAX_VALUE;
         int nrExecutorsPerNode = 1;
         double minDifference = 10;
@@ -54,16 +53,18 @@ public class HeatDissipatorApp {
                 width = Integer.parseInt(args[i]);
             } else if (args[i].equals("-t")) {
                 i++;
-                divideConquerThreshold = Integer.parseInt(args[i]);
+                nrExecutorsPerNode = Integer.parseInt(args[i]);
             } else {
                 throw new Error("Usage: java HeatDissipatorApp "
                         + "[ -d <minDelta> ]"
                         + "[ -m <maxIteration> ]"
                         + "[ -h <height> ]"
                         + "[ -w <width> ]"
-                        + "[ -t <threshold> ]");
+                        + "[ -e <executors> ]");
             }
         }
+
+        int divideConquerThreshold = calcThreshold(nrExecutorsPerNode, height);
 
         OrContext orContext = new OrContext(new Context(StencilOperationActivity.LABEL), new Context(DivideConquerActivity.LABEL));
 
@@ -128,6 +129,18 @@ public class HeatDissipatorApp {
         log.debug("calling Constellation.done()");
         constellation.done();
         log.debug("called Constellation.done()");
+    }
+
+    private static int calcThreshold(int nrExecutorsPerNode, int height) {
+        int pieces = 1;
+        int pieceHeight = height;
+
+        while (pieces < nrExecutorsPerNode) {
+            pieceHeight = (int) Math.ceil((double) pieceHeight / 2);
+            pieces *= 2;
+        }
+
+        return pieceHeight + 2;
     }
 
 }
