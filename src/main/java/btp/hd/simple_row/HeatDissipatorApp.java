@@ -52,12 +52,16 @@ public class HeatDissipatorApp {
             } else if (args[i].equals("-w")) {
                 i++;
                 width = Integer.parseInt(args[i]);
+            } else if (args[i].equals("-t")) {
+                i++;
+                divideConquerThreshold = Integer.parseInt(args[i]);
             } else {
                 throw new Error("Usage: java HeatDissipatorApp "
-                        + "[ -d <num> ] minimum temp delta"
-                        + "[ -m <num> ] maximum iterations"
+                        + "[ -d <minDelta> ]"
+                        + "[ -m <maxIteration> ]"
                         + "[ -h <height> ]"
-                        + "[ -w <width> ]");
+                        + "[ -w <width> ]"
+                        + "[ -t <threshold> ]");
             }
         }
 
