@@ -65,9 +65,6 @@ public class HeatDissipatorApp {
             }
         }
 
-
-        log.info("HeatDissipatorApp, running with dimensions {} x {}:", height, width);
-
         OrContext orContext = new OrContext(new Context(StencilOperationActivity.LABEL), new Context(DivideConquerActivity.LABEL));
 
         // Initialize Constellation with the following configurations
@@ -83,6 +80,7 @@ public class HeatDissipatorApp {
         constellation.activate();
 
         if (constellation.isMaster()) {
+            log.info("HeatDissipatorApp, running with dimensions {} x {}:", height, width);
             // This is master specific code.  The rest is going to call
             // Constellation.done(), waiting for Activities to steal.
 
@@ -96,7 +94,7 @@ public class HeatDissipatorApp {
             Timer overallTimer = constellation.getOverallTimer();
             int timing = overallTimer.start();
 
-            log.info("Performing stencil operations on:\n{}", result.toString());
+            log.debug("Performing stencil operations on:\n{}", result.toString());
 
             int i = 0;
             do {
@@ -114,7 +112,7 @@ public class HeatDissipatorApp {
                 result = (TempResult) sec.waitForEvent().getData();
                 log.debug("main(), done with waitForEvent() on identifier " + aid);
 
-                log.info("Performed stencil operation with max temperature delta {}",
+                log.debug("Performed stencil operation with max temperature delta {}",
                     result.getMaxDifference());
 
                 temp = result.getTemp();
@@ -124,8 +122,7 @@ public class HeatDissipatorApp {
 
             overallTimer.stop(timing);
 
-            log.info("Result after {} iteration(s) and {} ms:\n{}", i, overallTimer.totalTimeVal() / 1000,
-                result.toString());
+            log.info("Result for iteration(s) {} calculated after {} ms", i, overallTimer.totalTimeVal() / 1000);
             writeFile(i, minDifference, width, height, overallTimer.totalTimeVal() /1000, result);
         }
         log.debug("calling Constellation.done()");
