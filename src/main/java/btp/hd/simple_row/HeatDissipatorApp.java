@@ -51,7 +51,7 @@ public class HeatDissipatorApp {
             } else if (args[i].equals("-w")) {
                 i++;
                 width = Integer.parseInt(args[i]);
-            } else if (args[i].equals("-t")) {
+            } else if (args[i].equals("-e")) {
                 i++;
                 nrExecutorsPerNode = Integer.parseInt(args[i]);
             } else {
