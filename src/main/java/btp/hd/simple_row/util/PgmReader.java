@@ -1,59 +1,71 @@
 package btp.hd.simple_row.util;
 
 import java.io.*;
-import java.util.Objects;
 import java.util.StringTokenizer;
 
 public class PgmReader {
 
-    private static final String TEMP_TXT = "temp.txt";
-    private static final String COND_TXT = "cond.txt";
+    private static final String TEMP = "plasma";
+    private static final String COND = "pat2";
 
-    public static double[][] getTempValues() {
-        return read(TEMP_TXT);
+    public static double[][] getTempValues(String fileDir, int height, int width) {
+        try {
+            return read(fileDir + TEMP, height, width, 100, 100);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
-    public static double[][] getCondValues() {
-        return read(COND_TXT);
+    public static double[][] getCondValues(String fileDir, int height, int width) {
+        try {
+            return read(fileDir + COND, height, width, 0, 1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
-    private static double[][] read(String fileName) {
-        int height = 0;
-        int width = 0;
+    private static double[][] read(String fileDir, int height, int width, int min, int max) throws IOException {
         double[][] matrix;
+        String fileName = String.format("%s_%dx%d.pgm", fileDir, height, width);
+
+        System.out.println("Reading file from dir: " + fileDir);
 
         BufferedReader br = openBufferedReader(fileName);
 
-        try { // read dimensions
-            StringTokenizer dimensions = new StringTokenizer(br.readLine());
-            height = Integer.parseInt(dimensions.nextToken());
-            width = Integer.parseInt(dimensions.nextToken());
-        } catch (IOException e) {
-            System.err.println("Invalid integer found!");
-            System.exit(1);
-        }
+        br.readLine(); // ignore "P2"?
+        StringTokenizer dimensions = new StringTokenizer(br.readLine());
+        height = Integer.parseInt(dimensions.nextToken());
+        width = Integer.parseInt(dimensions.nextToken());
+        double maxValue = Double.parseDouble(br.readLine()); // ignore max heat
 
+        int x = 0;
+        int y = 0;
         matrix = new double[height][width];
 
-        try { // read values
-            for (int i = 0; i < height; i++) {
-                StringTokenizer row = new StringTokenizer(br.readLine());
+        do {
+            StringTokenizer row = new StringTokenizer(br.readLine());
 
-                for (int j = 0; j < width; j++) {
-                    matrix[i][j] = Double.parseDouble(row.nextToken());
+            while (row.hasMoreTokens()) {
+                matrix[y][x] = min + Double.parseDouble(row.nextToken()) * (max - min) / maxValue;
+                x++;
+
+                if (x == width) {
+                    x = 0;
+                    y++;
                 }
             }
-        } catch (IOException e) {
-            System.err.println("Invalid double found!");
-            System.exit(1);
-        }
+        } while (y < height);
 
         return matrix;
     }
 
     private static BufferedReader openBufferedReader(String fileName) {
         try {
-            return new BufferedReader(getResourceReader(fileName));
+            return new BufferedReader(new FileReader(fileName));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -61,15 +73,16 @@ public class PgmReader {
         return null; // ignore
     }
 
-    private static Reader getResourceReader(String fileName) throws FileNotFoundException {
-        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-        InputStream inputStream = classLoader.getResourceAsStream(fileName);
-
-        if (Objects.isNull(inputStream)) {
-            throw new FileNotFoundException(String.format("File '{}' not found", fileName));
-        }
-
-        return new InputStreamReader(inputStream);
-    }
+//    private static Reader getResourceReader(String fileName) throws FileNotFoundException {
+//        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+//        InputStream inputStream = classLoader.getResourceAsStream(fileName);
+//
+//        if (Objects.isNull(inputStream)) {
+//            throw new FileNotFoundException(String.format("File '{}' not found", fileName));
+//        }
+//
+//        return new InputStreamReader(inputStream);
+//    }
 
 }
+
