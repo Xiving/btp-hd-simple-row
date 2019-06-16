@@ -7,10 +7,12 @@ import btp.hd.simple_row.model.CylinderSlice;
 import btp.hd.simple_row.model.TempChunk;
 import btp.hd.simple_row.model.TempResult;
 import btp.hd.simple_row.util.HeatValueGenerator;
+import btp.hd.simple_row.util.PgmReader;
 import ibis.constellation.*;
 import ibis.constellation.util.SingleEventCollector;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -32,36 +34,54 @@ public class HeatDissipatorApp {
 
     public static void main(String[] args) throws Exception {
 
-        int maxIterations = Integer.MAX_VALUE;
+        // Default config
+        String fileDir = null;
         int nrExecutorsPerNode = 1;
-        double minDifference = 10;
-        int height = 10;
-        int width = 10;
+        double minDifference = 0.1;
+        int maxIterations = Integer.MAX_VALUE;
+        int height = 0;
+        int width = 0;
 
-        for (int i = 0; i < args.length; i++) {
-            if (args[i].equals("-d")) {
-                i++;
-                minDifference = Double.parseDouble(args[i]);
-            } else if (args[i].equals("-m")) {
-                i++;
-                maxIterations = Integer.parseInt(args[i]);
-            } else if (args[i].equals("-h")) {
-                i++;
-                height = Integer.parseInt(args[i]);
-            } else if (args[i].equals("-w")) {
-                i++;
-                width = Integer.parseInt(args[i]);
-            } else if (args[i].equals("-e")) {
-                i++;
-                nrExecutorsPerNode = Integer.parseInt(args[i]);
-            } else {
-                throw new Error("Usage: java HeatDissipatorApp "
+        // overwrite defaults with input arguments
+        for (int i = 0; i < args.length; i += 2) {
+            switch (args[i]) {
+                case "-f":
+                    fileDir = args[i + 1];
+                    break;
+                case "-e":
+                    nrExecutorsPerNode = Integer.parseInt(args[i + 1]);
+                    break;
+                case "-d":
+                    minDifference = Double.parseDouble(args[i + 1]);
+                    break;
+                case "-m":
+                    maxIterations = Integer.parseInt(args[i + 1]);
+                    break;
+                case "-h":
+                    height = Integer.parseInt(args[i + 1]);
+                    break;
+                case "-w":
+                    width = Integer.parseInt(args[i + 1]);
+                    break;
+                default:
+                    throw new Error("Usage: java HeatDissipatorApp "
+                        + " -f fileDir "
+                        + "[ -e <nrOfExecutors> ]"
                         + "[ -d <minDelta> ]"
                         + "[ -m <maxIteration> ]"
                         + "[ -h <height> ]"
-                        + "[ -w <width> ]"
-                        + "[ -e <executors> ]");
+                        + "[ -w <width> ]");
             }
+        }
+
+        if (Objects.isNull(fileDir) || height < 1 || width < 1) {
+            throw new Error("Usage: java HeatDissipatorApp "
+                + " -f fileDir "
+                + "[ -e <nrOfExecutors> ]"
+                + "[ -d <minDelta> ]"
+                + "[ -m <maxIteration> ]"
+                + "[ -h <height> ]"
+                + "[ -w <width> ]");
         }
 
         int divideConquerThreshold = calcThreshold(nrExecutorsPerNode, height);
@@ -87,15 +107,15 @@ public class HeatDissipatorApp {
 
             HeatValueGenerator heatValueGenerator = new HeatValueGenerator(height, width, 0.05, 100);
 
-            double[][] temp = heatValueGenerator.getTemp();
-            double[][] cond = heatValueGenerator.getCond();
+            double[][] temp = PgmReader.getTempValues(fileDir, height, width);
+            double[][] cond = PgmReader.getCondValues(fileDir, height, width);
 
             TempResult result = TempResult.of(temp, 0, 0);
 
             Timer overallTimer = constellation.getOverallTimer();
             int timing = overallTimer.start();
 
-            log.debug("Performing stencil operations on:\n{}", result.toString());
+            //log.debug("Performing stencil operations on:\n{}", result.toString());
 
             int i = 0;
             do {
@@ -118,7 +138,7 @@ public class HeatDissipatorApp {
 
                 temp = result.getTemp();
                 i++;
-                log.debug("Iteration {}:\n{}", i, result.toString());
+                //log.debug("Iteration {}:\n{}", i, result.toString());
             } while (result.getMaxDifference() > minDifference && i < maxIterations);
 
             overallTimer.stop(timing);
