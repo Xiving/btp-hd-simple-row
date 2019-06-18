@@ -7,25 +7,29 @@ import btp.hd.simple_row.model.CylinderSlice;
 import btp.hd.simple_row.model.TempChunk;
 import btp.hd.simple_row.model.TempResult;
 import btp.hd.simple_row.util.HeatValueGenerator;
+import btp.hd.simple_row.util.JobSubmission;
 import btp.hd.simple_row.util.PgmReader;
 import ibis.constellation.*;
 import ibis.constellation.util.SingleEventCollector;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.PrintStream;
+import java.util.List;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class HeatDissipatorApp {
 
-    public static void writeFile(int it, double min, int w, int h, double ms, TempChunk temp) {
+    public static void writeFile(int it, double min, int w, int h, double ms, TempChunk temp, int nodes, int executors) {
         try {
-            PrintStream out = new PrintStream("heat-dissipator.out");
+            PrintStream out = new PrintStream(
+                new FileOutputStream(String.format("heat-dissipator-n%d-e%d.out", nodes,executors), true)
+            );
 
             out.println("Performed simple row heat dissipator sim");
             out.println(String.format("Iterations: %d, min temp delta: %f", it, min));
             out.println(String.format("Dimensions: %d x %d, time: %f ms\n", h, w, ms));
-            out.println(temp.toString());
             out.close();
         } catch (FileNotFoundException e) {
             log.error(e.getMessage());
@@ -142,9 +146,10 @@ public class HeatDissipatorApp {
             } while (result.getMaxDifference() > minDifference && i < maxIterations);
 
             overallTimer.stop(timing);
+            List<String> nodes = JobSubmission.getNodes();
 
             log.info("Result for iteration(s) {} calculated after {} ms", i, overallTimer.totalTimeVal() / 1000);
-            writeFile(i, minDifference, width, height, overallTimer.totalTimeVal() /1000, result);
+            writeFile(i, minDifference, width, height, overallTimer.totalTimeVal() /1000, result, nodes.size(), nrExecutorsPerNode);
         }
         log.debug("calling Constellation.done()");
         constellation.done();
