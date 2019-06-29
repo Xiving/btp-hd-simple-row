@@ -34,7 +34,7 @@ public class StencilOperationActivity extends Activity {
     @Override
     public int initialize(Constellation cons) {
         String executor = cons.identifier().toString();
-        Timer timer = cons.getTimer("java", executor, "stencil operation");
+        Timer timer = cons.getTimer("java", executor, "operation");
         int timing = timer.start();
 
         //log.debug("Performing stencil operation on:\n{}", slice.toString());

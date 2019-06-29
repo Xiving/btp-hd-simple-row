@@ -51,12 +51,14 @@ public class DivideConquerActivity extends Activity {
             result = TempResult.of(slice);
 
             String executor = cons.identifier().toString();
-            timer = cons.getTimer("java", executor, "stencil operation");
+            timer = cons.getTimer("java", executor, "splitting");
             timerId = timer.start();
 
             int half = (int) Math.ceil((double) slice.height() / 2);
             submit(cons, slice, 0, half + 1);
             submit(cons, slice, half - 1, slice.height());
+
+            timer.stop(timerId);
 
             return SUSPEND;
         }
@@ -90,9 +92,8 @@ public class DivideConquerActivity extends Activity {
         result.add((TempResult) event.getData());
 
         if (result.finished()) {
-            timer.stop(timerId);
-            log.info("Performed  a stencil operation of size {} x {} in {} ms",
-                slice.height(), slice.width(), timer.totalTimeVal() / 1000);
+            log.info("Performed  a stencil operation of size {} x {}",
+                slice.height(), slice.width());
             return FINISH;
         }
 
