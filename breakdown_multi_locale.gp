@@ -2,7 +2,7 @@ reset
 #set terminal 'wxt'
 set terminal 'pdfcairo' color dashed enhanced
 #set terminal 'png'
-set output '../latex/sections/global-view-multi-locale/figures/breakdown-multi.pdf'
+set output '~/plots/breakdown-multi.pdf'
 #set title "Breakdown execution time stages"
 set key invert reverse Left outside
 set key autotitle columnheader
