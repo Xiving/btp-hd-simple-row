@@ -2,6 +2,6 @@
 
 TEMP_FILE=$(mktemp)
 
-python2 /git/btp-hd-simple-row/scripts/gantt.py $* > $TEMP_FILE
+python2 ~/git/btp-hd-simple-row/scripts/gantt.py $* > $TEMP_FILE
 gnuplot -persist $TEMP_FILE
 /bin/rm -f $TEMP_FILE
