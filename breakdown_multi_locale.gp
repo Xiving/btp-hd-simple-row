@@ -17,5 +17,5 @@ set boxwidth 0.75
 set xlabel '# locales'
 set ylabel 'execution time (s)'
 
-plot 'breakdown_multi_locale.dat' \
+plot 'gantt.data' \
      using 2:xtic(1), for [i=3:5] '' using i
